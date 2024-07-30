@@ -55,6 +55,42 @@
       border-radius: 50%;
       padding: 0.25rem; /* Add padding to create circle effect */
     }
+
+    .auth-button img {
+      width: 20px; /* Set width for the images */
+      height: 20px; /* Set height for the images */
+      max-width: 20px; /* Ensure images do not exceed this width */
+      max-height: 20px; /* Ensure images do not exceed this height */
+      margin-right: 8px; /* Space between image and text */
+      object-fit: cover;
+    }
+
+    .modal-title {
+      font-family: Georgia, 'Times New Roman', Times, serif; 
+      font-weight: 400; 
+      font-size: 28px; 
+      line-height: 32px; 
+      color: #000000;
+    }
+
+    .modal-footer small {
+      font-family: Georgia, 'Times New Roman', Times, serif; 
+      font-weight: 400; 
+      font-size: 13px; 
+      line-height: 20px; 
+      color: #6b6b6b;
+    }
+
+    .modal-footer a {
+      color: #6b6b6b;
+    }
+
+    .auth-link {
+      color: #156d12;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+    }
   </style>
   <nav class="navbar navbar-expand-lg">
     <div class="container">
@@ -71,15 +107,15 @@
         </div>
         <ul class="navbar-nav ms-auto d-flex align-items-center">
           <li class="nav-item">
-            <a class="nav-link d-flex align-items-center me-3" href="/write">
+            <a class="nav-link d-flex align-items-center me-3" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
               <i class="bi bi-pencil-square"></i> Write
             </a>
           </li>
           <li class="nav-item">
-            <button class="btn sign-up me-3">Sign up</button>
+            <button class="btn sign-up me-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Sign up</button>
           </li>
           <li class="nav-item">
-            <a class="nav-link me-3" href="/signin">Sign in</a>
+            <a class="nav-link me-3" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Sign in</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/profile">
@@ -90,3 +126,32 @@
       </div>
     </div>
   </nav>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Create an account to like or comment.</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <button class="btn btn-outline-dark w-100 mb-3 auth-button">
+            <img src="/google.png" alt="Google"> Sign up with Google
+          </button>
+          <button class="btn btn-outline-dark w-100 mb-3 auth-button">
+            <img src="/facebook.png" alt="Facebook"> Sign up with Facebook
+          </button>
+          <button class="btn btn-outline-dark w-100 mb-3 auth-button">
+            <i class="bi bi-envelope me-2"></i> Sign up with email
+          </button>
+          <div class="text-center mt-3">
+            Already have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#signInModal" class="auth-link">Sign in</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <small>Click "Sign up" to agree to RxJourney's <a href="#">Terms of Service</a> and acknowledge that RxJourney's <a href="#">Privacy Policy</a> applies to you.</small>
+        </div>
+      </div>
+    </div>
+  </div>
