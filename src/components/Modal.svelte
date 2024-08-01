@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { fetchCsrfToken, validateEmail, checkEmail } from '../utils';
 
   export let modalId = "exampleModal";
   export let modalTitle = "Create an account to like or comment.";
@@ -16,11 +17,11 @@
   }
 
   async function handleContinue() {
-    validateEmail();
+    emailError = validateEmail(email);
     if (!emailError) {
       loading = true;
       try {
-        const data = await checkEmail(email);
+        const data = await checkEmail(email, csrfToken);
         loading = false;
 
         if (data.exists) {
@@ -36,35 +37,8 @@
     }
   }
 
-  function validateEmail() {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      emailError = 'Please enter a valid email address.';
-    } else {
-      emailError = '';
-    }
-  }
-
-  async function fetchCsrfToken() {
-    try {
-      const response = await fetch('http://localhost:8000/get-csrf-token/', {
-        method: 'GET',
-        credentials: 'include' // Ensure credentials are included
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch CSRF token');
-      }
-
-      const data = await response.json();
-      csrfToken = data.csrfToken;
-    } catch (error) {
-      console.error('Error fetching CSRF token:', error);
-    }
-  }
-
   onMount(async () => {
-    await fetchCsrfToken();
+    csrfToken = await fetchCsrfToken();
 
     const modalElement = document.getElementById(modalId);
     modalElement.addEventListener('hide.bs.modal', () => {
@@ -74,36 +48,12 @@
     });
   });
 
-  async function checkEmail(email) {
-    if (!csrfToken) {
-      await fetchCsrfToken();
-    }
-
-    const response = await fetch('http://localhost:8000/check-email/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken,
-      },
-      credentials: 'include',  // Ensure credentials are included
-      body: JSON.stringify({ email: email }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const data = await response.json();
-    return data;
-  }
-
   function closeModal() {
     const modalElement = document.getElementById(modalId);
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
     modalInstance.hide();
   }
 </script>
-
 <style>
   .modal-title {
     font-family: Georgia, 'Times New Roman', Times, serif;
@@ -225,3 +175,4 @@
     </div>
   </div>
 </div>
+
