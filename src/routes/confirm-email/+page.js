@@ -9,7 +9,7 @@ export async function load({ url }) {
   
     if (res.ok) {
         const data = await res.json();
-        return { valid: data.valid, formData: data.data };
+        return { valid: data.valid, formData: { ...data.data, token } };
     } else {
         return { valid: false };
     }

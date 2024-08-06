@@ -1,5 +1,5 @@
 <script>
-  import { fetchCsrfToken, validateEmail, checkEmail } from '../../utils'
+  import { fetchCsrfToken, validateEmail, checkEmail } from '../../utils';
   import AlmostThere from '../../components/AlmostThere.svelte';
   import ExpiredLink from '../../components/ExpiredLink.svelte';
 
@@ -14,8 +14,9 @@
 
   async function handleContinue() {
     emailError = validateEmail(email);
+  
     if (!emailError) {
-      loading = true; 
+      loading = true;
       try {
         csrfToken = await fetchCsrfToken();
         const data = await checkEmail(email, csrfToken);
@@ -79,10 +80,10 @@
   </div>
 
   {#if valid}
-  <AlmostThere {formData} />
+    <AlmostThere {formData} />
   {:else}
     <ExpiredLink
-      {email}
+      bind:email
       {emailError}
       {emailExistsError}
       {loading}
