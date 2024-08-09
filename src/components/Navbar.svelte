@@ -1,6 +1,4 @@
 <script>
-  import { goto } from '$app/navigation';
-
   export let isAdmin;
   export let isAuthenticated;
   let showDropdown = false;
@@ -17,11 +15,6 @@
     }
   }
 
-  function navigateTo(event, url) {
-    event.preventDefault();
-    goto(url);
-  }
-
   // Add event listener for click events on document
   // Only run this code on the client side
   import { onMount } from 'svelte';
@@ -36,6 +29,7 @@
     });
   });
 </script>
+
 <style>
   .navbar-brand {
     font-family: "medium-content-sans-serif-font", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -172,16 +166,16 @@
               <i class="bi bi-bell icon notification-icon"></i>
             </a>
           </li>
-          <li class="nav-item dropdown" on:click|preventDefault={toggleDropdown}>
+          <li class="nav-item dropdown" on:click={toggleDropdown}>
             <a class="nav-link" href="#" id="profileDropdown">
               <i class="bi bi-person-circle icon profile-icon"></i>
             </a>
             <div class="dropdown-menu {showDropdown ? 'show' : ''}" aria-labelledby="profileDropdown">
-              <a class="dropdown-item" href="#" on:click={(event) => navigateTo(event, '/settings')}><i class="bi bi-gear me-2"></i> Settings</a>
-              <a class="dropdown-item" href="#" on:click={(event) => navigateTo(event, '/recommendations')}><i class="bi bi-funnel"></i> Refine recommendations</a>
-              <a class="dropdown-item" href="#" on:click={(event) => navigateTo(event, '/publications')}><i class="bi bi-newspaper"></i> Manage publications</a>
-              <a class="dropdown-item" href="#" on:click={(event) => navigateTo(event, '/help')}><i class="bi bi-question-circle"></i> Help</a>
-              <a class="dropdown-item" href="#" on:click={(event) => navigateTo(event, '/signout')}><i class="bi bi-box-arrow-right"></i> Sign out</a>
+              <a class="dropdown-item" href="/settings"><i class="bi bi-gear me-2"></i> Settings</a>
+              <a class="dropdown-item" href="/recommendations"><i class="bi bi-funnel"></i> Refine recommendations</a>
+              <a class="dropdown-item" href="/publications"><i class="bi bi-newspaper"></i> Manage publications</a>
+              <a class="dropdown-item" href="/help"><i class="bi bi-question-circle"></i> Help</a>
+              <a class="dropdown-item" href="/signout"><i class="bi bi-box-arrow-right"></i> Sign out</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#"><i class="bi bi-envelope"></i> st••••••••@gmail.com</a>
             </div>
