@@ -1,5 +1,6 @@
 <script>
 	import AccountTab from "./AccountTab.svelte";
+    import SecurityTab from "./SecurityTab.svelte";
 
     export let user;
     export let handleDeleteClick;
@@ -19,13 +20,15 @@
       {#if activeTab === "Notifications"}
         Email notifications
       {/if}
-      <!-- Add similar conditions for other tabs if needed -->
+      {#if activeTab === "Security"}
+      Security
+    {/if}
     </h1>
     
     <div class="settings-tabs">
       <div class="settings-tab {activeTab === 'Account' ? 'active' : ''}" on:click={() => changeTab('Account')}>Account</div>
       <div class="settings-tab {activeTab === 'Notifications' ? 'active' : ''}" on:click={() => changeTab('Notifications')}>Notifications</div>
-      <div class="settings-tab">Security</div>
+      <div class="settings-tab {activeTab === 'Security' ? 'active' : ''}" on:click={() => changeTab('Security')}>Security</div>
     </div>
   
     <div class="settings-section">
@@ -42,8 +45,10 @@
           <p>You'll receive emails for responses to your comments.</p>
         </div>
       {/if}
-  
-      <!-- Add other tabs' content here if needed -->
+
+      {#if activeTab === "Security"}
+      <SecurityTab />
+    {/if}
     </div>
   </div>
   
