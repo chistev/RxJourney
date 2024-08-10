@@ -19,6 +19,7 @@
   // Only run this code on the client side
   import { onMount } from 'svelte';
   import { onDestroy } from 'svelte';
+	import UserMenu from './UserMenu.svelte';
 
   onMount(() => {
     document.addEventListener('click', closeDropdown);
@@ -75,67 +76,6 @@
     background-color: darkgreen;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-
-  .icon {
-    font-size: 1.5rem;
-    margin-right: 0.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .profile-icon:hover,
-  .notification-icon:hover {
-    color: white;
-    background-color: #191919;
-    border-radius: 50%;
-    padding: 0.25rem;
-  }
-
-  .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 200px;
-    z-index: 1000;
-    display: none;
-  }
-
-  .dropdown-menu.show {
-    display: block;
-  }
-
-  .dropdown-item {
-    padding: 10px 20px;
-    cursor: pointer;
-    color: #242424;
-    font-family: "medium-content-sans-serif-font", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 400;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-  }
-
-  .dropdown-item:hover {
-    background-color: #f9f9f9;
-  }
-
-  .dropdown-divider {
-    height: 1px;
-    margin: 0.5rem 0;
-    overflow: hidden;
-    background-color: #e5e5e5;
-  }
-
-  @media (max-width: 768px) {
-    .dropdown-menu {
-      width: 100%;
-    }
-  }
 </style>
 
 <nav class="navbar navbar-expand-lg">
@@ -161,25 +101,7 @@
           </li>
         {/if}
         {#if isAuthenticated}
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <i class="bi bi-bell icon notification-icon"></i>
-            </a>
-          </li>
-          <li class="nav-item dropdown" on:click={toggleDropdown}>
-            <a class="nav-link" href="#" id="profileDropdown">
-              <i class="bi bi-person-circle icon profile-icon"></i>
-            </a>
-            <div class="dropdown-menu {showDropdown ? 'show' : ''}" aria-labelledby="profileDropdown">
-              <a class="dropdown-item" href="/settings"><i class="bi bi-gear me-2"></i> Settings</a>
-              <a class="dropdown-item" href="/recommendations"><i class="bi bi-funnel"></i> Refine recommendations</a>
-              <a class="dropdown-item" href="/publications"><i class="bi bi-newspaper"></i> Manage publications</a>
-              <a class="dropdown-item" href="/help"><i class="bi bi-question-circle"></i> Help</a>
-              <a class="dropdown-item" href="/signout"><i class="bi bi-box-arrow-right"></i> Sign out</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#"><i class="bi bi-envelope"></i> st••••••••@gmail.com</a>
-            </div>
-          </li>
+          <UserMenu {showDropdown} toggleDropdown={toggleDropdown} {isAuthenticated}/>
         {:else}
           <li class="nav-item">
             <button class="btn sign-up me-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Sign up</button>
