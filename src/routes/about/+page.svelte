@@ -1,5 +1,6 @@
 <script>
-	import ProfileCard from "../../components/ProfileCard.svelte";
+	import AboutContent from "../../components/AboutContent.svelte";
+import ProfileCard from "../../components/ProfileCard.svelte";
 
 </script>
 <div class="container">
@@ -12,10 +13,7 @@
         </div>
       </div>
   
-      <div class="about-content">
-        <h2>About Me</h2>
-        <p>Here is some placeholder content about Chistev. This is where the "About" content will go.</p>
-      </div>
+      <AboutContent/>
     </div>
   
     <ProfileCard/>
