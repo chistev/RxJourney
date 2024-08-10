@@ -1,12 +1,36 @@
 <script>
+    import { onMount } from 'svelte';
     export let showDropdown = false;
     export let toggleDropdown;
     export let isAuthenticated;
+    let isLoading = false;
   
-    function handleSignOut() {
-      // Handle sign out logic here
+    async function handleSignOut() {
+      isLoading = true;
+      try {
+        const response = await fetch('http://localhost:8000/signout/', {
+          method: 'POST',
+          credentials: 'include',
+        });
+  
+        if (!response.ok) {
+          throw new Error('Sign out failed');
+        }
+  
+        const result = await response.json();
+        if (result.success) {
+          window.location.href = '/';
+        } else {
+          console.error('Sign out failed');
+        }
+      } catch (error) {
+        console.error('Error during sign out:', error);
+      } finally {
+        isLoading = false;
+      }
     }
   </script>
+  
   
   <style>  
     .icon {
@@ -69,23 +93,38 @@
         width: 100%;
       }
     }
+
+    .loading-indicator {
+    display: none;
+  }
+
+  .loading-indicator.active {
+    display: inline-block;
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-left: 0.5rem;
+  }
   </style>
   
   {#if isAuthenticated}
-    <li class="nav-item">
-      <a class="nav-link" href="#">
-        <i class="bi bi-bell icon notification-icon"></i>
+  <li class="nav-item">
+    <a class="nav-link" href="#">
+      <i class="bi bi-bell icon notification-icon"></i>
+    </a>
+  </li>
+  <li class="nav-item dropdown" on:click={toggleDropdown}>
+    <a class="nav-link" href="#" id="profileDropdown">
+      <i class="bi bi-person-circle icon profile-icon"></i>
+    </a>
+    <div class="dropdown-menu {showDropdown ? 'show' : ''}" aria-labelledby="profileDropdown">
+      <a class="dropdown-item" href="/settings"><i class="bi bi-gear me-2"></i> Settings</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#" on:click={handleSignOut}>
+        <i class="bi bi-box-arrow-right me-2"></i> Sign out
+        {#if isLoading}
+          <span class="loading-indicator active">...</span>
+        {/if}
       </a>
-    </li>
-    <li class="nav-item dropdown" on:click={toggleDropdown}>
-      <a class="nav-link" href="#" id="profileDropdown">
-        <i class="bi bi-person-circle icon profile-icon"></i>
-      </a>
-      <div class="dropdown-menu {showDropdown ? 'show' : ''}" aria-labelledby="profileDropdown">
-        <a class="dropdown-item" href="/settings"><i class="bi bi-gear me-2"></i> Settings</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/signout" on:click={handleSignOut}><i class="bi bi-box-arrow-right me-2"></i> Sign out</a>
-      </div>
-    </li>
-  {/if}
-  
+    </div>
+  </li>
+{/if}
