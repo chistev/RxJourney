@@ -1,6 +1,19 @@
 <script>
   import Modal from "../components/Modal.svelte";
 	import ProfileCard from "../components/ProfileCard.svelte";
+
+  import { goto } from '$app/navigation';
+  
+  let currentTab = 'home';
+
+  function navigateTo(page) {
+    currentTab = page;
+    if (page === 'home') {
+      goto('/');
+    } else if (page === 'about') {
+      goto('/about');
+    }
+  }
 </script>
 
 <style>
@@ -114,30 +127,36 @@
     <div class="header">
       <h1 class="mb-4">Chistev</h1>
       <div class="nav-links">
-        <a href="#" class="active">Home</a>
-        <a href="#">About</a>
+        <a href="#" class={currentTab === 'home' ? 'active' : ''} on:click={() => navigateTo('home')}>Home</a>
+        <a href="#" class={currentTab === 'about' ? 'active' : ''} on:click={() => navigateTo('about')}>About</a>
       </div>
     </div>
 
-    <ul class="article-list">
-      <li class="article-item">
-        <div class="article-content">
-          <h2>6 Tips When Learning To Code</h2>
-          <p>
-            Learning to code can be a very overwhelming thing for many people. I’d say that it is for most people...
-          </p>
-          <div class="article-meta">
-            <span>Feb 1, 2022</span>
-            <span><i class="bi bi-hand-thumbs-up-fill"></i> 578</span>
-            <span><i class="bi bi-chat-right-fill"></i> 9</span>
+    {#if currentTab === 'home'}
+      <ul class="article-list">
+        <li class="article-item">
+          <div class="article-content">
+            <h2>6 Tips When Learning To Code</h2>
+            <p>
+              Learning to code can be a very overwhelming thing for many people. I’d say that it is for most people...
+            </p>
+            <div class="article-meta">
+              <span>Feb 1, 2022</span>
+              <span><i class="bi bi-hand-thumbs-up-fill"></i> 578</span>
+              <span><i class="bi bi-chat-right-fill"></i> 9</span>
+            </div>
           </div>
-        </div>
-        <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*P1X6xWGRakSvz9jCSBzV0A.jpeg" alt="Article Image 1">
-      </li>
-    </ul>
+          <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*P1X6xWGRakSvz9jCSBzV0A.jpeg" alt="Article Image 1">
+        </li>
+      </ul>
+    {:else if currentTab === 'about'}
+      <div class="about-content">
+        <h2>About Me</h2>
+        <p>Here is some placeholder content about Chistev. This is where the "About" content will go.</p>
+      </div>
+    {/if}
   </div>
 
   <ProfileCard/>
 </div>
-
 <Modal modalId="exampleModal" modalTitle="Create an account to like or comment." />
