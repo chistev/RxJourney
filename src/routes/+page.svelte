@@ -5,6 +5,10 @@
 
   import { goto } from '$app/navigation';
 	import AboutContent from "../components/AboutContent.svelte";
+
+  export let data;
+
+  const { posts } = data;
   
   let currentTab = 'home';
 
@@ -88,7 +92,7 @@
     </div>
 
     {#if currentTab === 'home'}
-      <HomeContent/>
+    <HomeContent {posts}/>
     {:else if currentTab === 'about'}
       <AboutContent/>
     {/if}

@@ -15,11 +15,25 @@
     }
   }
 
+  // Function to handle the "Write" button click
+  function handleWriteClick(event) {
+    if (isAuthenticated) {
+      // If authenticated, navigate to the write page
+      window.location.href = '/write';
+    } else {
+      // If not authenticated, trigger the modal
+      const modalTrigger = document.querySelector('#exampleModal');
+      if (modalTrigger) {
+        modalTrigger.click();
+      }
+    }
+  }
+
   // Add event listener for click events on document
   // Only run this code on the client side
   import { onMount } from 'svelte';
   import { onDestroy } from 'svelte';
-	import UserMenu from './UserMenu.svelte';
+  import UserMenu from './UserMenu.svelte';
 
   onMount(() => {
     document.addEventListener('click', closeDropdown);
@@ -95,8 +109,9 @@
       <ul class="navbar-nav ms-auto d-flex align-items-center">
         {#if isAdmin}
           <li class="nav-item">
-            <a class="nav-link d-flex align-items-center me-3" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              <i class="bi bi-pencil-square"></i> Write
+            <!-- Update the Write button to call handleWriteClick -->
+            <a class="nav-link d-flex align-items-center me-3" href="#" on:click|preventDefault={handleWriteClick}>
+              <i class="bi bi-pencil-square me-2"></i> Write
             </a>
           </li>
         {/if}
