@@ -48,7 +48,6 @@
                 newComment = '';
                 // Add the new comment to the local comments array
                 comments = [
-                    ...comments,
                     {
                         id: result.commentId,
                         username: 'Current User',
@@ -57,7 +56,8 @@
                         text: newComment,
                         likes: 0,
                         replies: []
-                    }
+                    },
+                    ...comments,
                 ];
             } else {
                 console.error('Failed to submit comment:', result.message);
