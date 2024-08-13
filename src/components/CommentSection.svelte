@@ -4,62 +4,68 @@
     import RichTextEditor from './RichTextEditor.svelte';
     import CommentDropdown from './CommentDropdown.svelte';
     import Comments from './Comments.svelte';
+    import SubmitCommentButton from './SubmitCommentButton.svelte';
+    import { fetchCsrfToken } from '../utils';
 
     let post;
-    const unsubscribe = postStore.subscribe(value => {
-        post = value;
-    });
-
+    let comments = [];
     let newComment = '';
-
     const dispatch = createEventDispatcher();
 
-    function handleCommentSubmit() {
-        console.log('New comment:', newComment);
-        newComment = '';
-    }
+    const unsubscribe = postStore.subscribe(value => {
+        post = value;
+        comments = post.comments || [];
+    });
 
-    // Dummy data for comments
-    let comments = [
-        {
-            id: 1,
-            username: 'Jane Doe',
-            avatar: 'https://via.placeholder.com/30',
-            time: '2 hours ago',
-            text: 'This is the first comment.',
-            likes: 3,
-            replies: [
-                {
-                    id: 2,
-                    username: 'John Smith',
-                    avatar: 'https://via.placeholder.com/30',
-                    time: '1 hour ago',
-                    text: 'This is a reply to the first comment.',
-                    likes: 2,
-                    replies: [
-                        {
-                            id: 3,
-                            username: 'Anna Taylor',
-                            avatar: 'https://via.placeholder.com/30',
-                            time: '30 minutes ago',
-                            text: 'This is a reply to the reply.',
-                            likes: 1,
-                            replies: []
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 4,
-            username: 'Michael Brown',
-            avatar: 'https://via.placeholder.com/30',
-            time: '3 hours ago',
-            text: 'This is another comment.',
-            likes: 1,
-            replies: []
+    async function handleCommentSubmit() {
+        const csrfToken = await fetchCsrfToken();
+
+        const postId = post.id;
+        const parentId = null;
+
+        try {
+            const response = await fetch('http://localhost:8000/detail/add-comment/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    postId: postId,
+                    content: newComment,
+                    parentId: parentId
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit comment');
+            }
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                newComment = '';
+                // Add the new comment to the local comments array
+                comments = [
+                    ...comments,
+                    {
+                        id: result.commentId,
+                        username: 'Current User',
+                        avatar: 'bi-person',
+                        time: 'Just now',
+                        text: newComment,
+                        likes: 0,
+                        replies: []
+                    }
+                ];
+            } else {
+                console.error('Failed to submit comment:', result.message);
+            }
+        } catch (error) {
+            console.error('Error submitting comment:', error);
         }
-    ];
+    }
 
     onMount(() => {
         return () => {
@@ -77,16 +83,8 @@
     </div>
 
     <RichTextEditor bind:newComment={newComment} />
-
-    <button 
-        class="submit-comment" 
-        on:click={handleCommentSubmit} 
-        disabled={!newComment.trim()} 
-    >
-        Respond
-    </button>
-
-    <CommentDropdown/>
+    <SubmitCommentButton onSubmit={handleCommentSubmit} isDisabled={!newComment.trim()} />
+    <CommentDropdown />
 
     {#each comments as comment (comment.id)}
         <Comments
@@ -98,8 +96,8 @@
             replies={comment.replies}
         />
     {/each}
-
 </div>
+
 
 <style>
   .comment-section {
@@ -157,30 +155,5 @@
     font-size: 20px;
     line-height: 20px;
     font-weight: bold;
-  }
-
-  .submit-comment {
-    align-self: flex-end;
-    padding: 10px 20px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: #242424;
-    background-color: #f9f9f9;
-    border: 2px solid #242424;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  .submit-comment:hover {
-    background-color: #242424;
-    color: #fff;
-  }
-
-  .submit-comment:disabled {
-    background-color: #e0e0e0;
-    color: #a0a0a0;
-    cursor: not-allowed;
   }
 </style>

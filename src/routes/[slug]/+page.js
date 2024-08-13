@@ -1,4 +1,4 @@
-import { postStore } from '../../stores/postStore.js';
+import { updatePostWithComments } from '../../stores/postStore.js';
 
 export async function load({ fetch, params }) {
     const { slug } = params;
@@ -17,7 +17,7 @@ export async function load({ fetch, params }) {
         }
   
         const post = await response.json();
-        postStore.set(post); // Update the store with the fetched post
+        updatePostWithComments(post); 
   
         // Log the received data to the console
         console.log('Received post data:', post);

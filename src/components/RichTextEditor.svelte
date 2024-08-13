@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, afterUpdate } from 'svelte';
 
     export let newComment = '';
     let isBoldActive = false;
@@ -11,11 +11,35 @@
     }
 
     function checkActiveStates() {
-        isBoldActive = document.queryCommandState('bold');
-        isItalicActive = document.queryCommandState('italic');
+        const editor = document.querySelector('.editor');
+        if (editor) {
+            // Ensure this runs when the editor has content
+            isBoldActive = document.queryCommandState('bold');
+            isItalicActive = document.queryCommandState('italic');
+        }
     }
 
     onMount(() => {
+        // Set initial state to inactive
+        isBoldActive = false;
+        isItalicActive = false;
+
+        // Set up observer to monitor changes in editor
+        const editor = document.querySelector('.editor');
+        if (editor) {
+            const observer = new MutationObserver(() => checkActiveStates());
+            observer.observe(editor, { childList: true, subtree: true });
+            
+            // Initial check to update button states if necessary
+            checkActiveStates();
+
+            // Cleanup on component destroy
+            return () => observer.disconnect();
+        }
+    });
+
+    afterUpdate(() => {
+        // Ensure active states are updated after each update
         checkActiveStates();
     });
 </script>
