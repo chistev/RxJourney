@@ -1,7 +1,9 @@
 <script>
     import { onMount, createEventDispatcher } from 'svelte';
     import { postStore } from '../stores/postStore';
-    import RichTextEditor from './RichTextEditor.svelte';  // Import the new component
+    import RichTextEditor from './RichTextEditor.svelte';
+	import CommentDropdown from './CommentDropdown.svelte';
+	import Comments from './Comments.svelte';
 
     let post;
     const unsubscribe = postStore.subscribe(value => {
@@ -10,12 +12,10 @@
 
     let newComment = '';
 
-    const dispatch = createEventDispatcher();  // Create the event dispatcher
+    const dispatch = createEventDispatcher();
 
     function handleCommentSubmit() {
-        // Handle comment submission (e.g., send to the server)
         console.log('New comment:', newComment);
-        // Clear the input field after submission
         newComment = '';
     }
 
@@ -34,7 +34,7 @@
         </button>
     </div>
 
-    <RichTextEditor bind:newComment={newComment} /> 
+    <RichTextEditor bind:newComment={newComment} />
 
     <button 
         class="submit-comment" 
@@ -43,23 +43,30 @@
     >
         Respond
     </button>
+
+    <CommentDropdown/>
+
+    <!-- Comments Section Start -->
+    <Comments/>
+    <!-- Comments Section End -->
+
 </div>
 
 <style>
-  /* Your existing styles here */
   .comment-section {
-      position: fixed;
-      right: 0;
-      top: 0;
-      width: 350px;
-      height: 100%;
-      background-color: #f9f9f9;
-      box-shadow: -3px 0px 15px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      z-index: 1000;
-  }
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 350px;
+    height: 100%;
+    background-color: #f9f9f9;
+    box-shadow: -3px 0px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
 
   .comment-header {
       display: flex;
@@ -69,11 +76,11 @@
   }
 
   .comment-header h2 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 24px;
-    color: #242424;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 24px;
+      color: #242424;
   }
 
   .close-button {
