@@ -11,10 +11,11 @@
 
 <div class="comment-dropdown mt-5">
     <select class="dropdown" on:change={handleSortChange}>
-        <option value="most-relevant">Most Relevant</option>
+        <option value="oldest" selected>Oldest</option>
         <option value="newest">Most Recent</option>
     </select>
 </div>
+
 
 
 <style>

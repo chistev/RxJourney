@@ -13,7 +13,7 @@
     let newComment = '';
     let currentUsername = ''; 
     let loading = false;
-    let sortOrder = 'most-relevant';  // Default sort order
+    let sortOrder = 'oldest';  // Default sort order
     const dispatch = createEventDispatcher();
 
     const unsubscribe = postStore.subscribe(value => {
