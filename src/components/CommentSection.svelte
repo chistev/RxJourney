@@ -48,7 +48,6 @@
             avatar: 'bi-person',
             time: 'Just now',
             text: commentContent,
-            likes: 0,
             replies: [],
             isTemp: true
         };
@@ -122,16 +121,18 @@
     {#if loading}
         <div class="loading-indicator">Loading...</div>
     {:else}
-        {#each comments as comment (comment.id)}
-            <Comments
-                username={comment.username}
-                avatar={comment.avatar}
-                time={comment.time}
-                text={comment.text}
-                likes={comment.likes}
-                replies={comment.replies}
-            />
-        {/each}
+    {#each comments as comment (comment.id)}
+    <Comments
+        username={comment.username}
+        avatar={comment.avatar}
+        time={comment.time}
+        text={comment.text}
+        replies={comment.replies}
+        commentId={comment.id} 
+        post={post}  
+    />
+{/each}
+
     {/if}
 </div>
 

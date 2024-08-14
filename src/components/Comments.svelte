@@ -1,27 +1,26 @@
 <script>
   import RichTextEditor from '../components/RichTextEditor.svelte';
-  import Comments from '../components/Comments.svelte';
   import SubmitCommentButton from './SubmitCommentButton.svelte';
   import { userStore } from '../stores/userStore';
-
+  import Comments from '../components/Comments.svelte'
+  import { fetchCsrfToken } from '../utils';
 
   export let username;
   export let avatar;
   export let time;
   export let text;
-  export let likes;
   export let replies = [];
+  export let commentId;  
+  export let post;  
 
   let showReplies = false;
   let replying = false;
   let replyText = '';
 
-  // Access the store
   let currentUser = {};
-    userStore.subscribe(user => {
-        currentUser = user; // Update the currentUser with store value
-    });
-
+  userStore.subscribe(user => {
+      currentUser = user;
+  });
 
   function toggleReplies() {
     showReplies = !showReplies;
@@ -31,22 +30,60 @@
     replying = !replying;
   }
 
-  function submitReply() {
+  async function submitReply() {
     if (replyText.trim()) {
-      replies = [
-        ...replies,
-        {
-          id: replies.length + 1, // Ensure unique id
-          username: currentUser.username, 
-          avatar: 'bi-person',
-          time: 'Just now',
-          text: replyText,
-          likes: 0,
-          replies: []
-        }
-      ];
+      const tempReplyId = Date.now();
+
+      const newReply = {
+        id: tempReplyId,
+        username: currentUser.username,
+        avatar: 'bi-person',
+        time: 'Just now',
+        text: replyText,
+        replies: [],
+        isTemp: true
+      };
+
+      replies = [...replies, newReply];
       replyText = '';
       replying = false;
+
+      try {
+        const csrfToken = await fetchCsrfToken();
+        const response = await fetch('http://localhost:8000/detail/add-comment/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            postId: post.id,
+            content: newReply.text,
+            parentId: commentId,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to submit reply');
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          replies = replies.map(reply =>
+            reply.id === tempReplyId
+              ? { ...reply, id: result.commentId, isTemp: false }
+              : reply
+          );
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.error('Error submitting reply:', error);
+        replies = replies.filter(reply => reply.id !== tempReplyId);
+        alert('Failed to submit reply. Please try again.');
+      }
     }
   }
 </script>
@@ -60,7 +97,6 @@
   </div>
   <p class="comment-text">{text}</p>
   <div class="comment-actions">
-    <i class="bi bi-hand-thumbs-up"></i> {likes}
     <span class="comment-reply" on:click={toggleReplies}>
       {#if showReplies}
         Hide Replies
@@ -88,13 +124,15 @@
           avatar={reply.avatar}
           time={reply.time}
           text={reply.text}
-          likes={reply.likes}
           replies={reply.replies}
+          commentId={reply.id}
+          post={post}
         />
       {/each}
     </div>
   {/if}
 </div>
+
 
 <style>
   .comment {
