@@ -3,11 +3,11 @@
   import RichTextEditor from '../components/RichTextEditor.svelte';
   import SubmitCommentButton from './SubmitCommentButton.svelte';
   import { fetchCsrfToken, formatDate } from '../utils';
-  import Comments from '../components/Comments.svelte';
-  import { onMount, onDestroy } from "svelte";
   import CommentOptionsMenu from './CommentOptionsMenu.svelte';
   import CommentActions from './CommentActions.svelte';
   import { createEventDispatcher } from 'svelte';
+  import Comments from '../components/Comments.svelte'
+  import { onMount, onDestroy } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -18,12 +18,13 @@
   export let replies = [];
   export let commentId;
   export let post;
-  export let parentReplies = [];
 
   let showReplies = false;
   let replying = false;
   let replyText = '';
   let showOptions = false;
+  let isEditing = false;
+  let editedText = text; // Text for editing
   let currentUser = {};
 
   userStore.subscribe(user => {
@@ -33,11 +34,7 @@
   // Function to handle delete action
   async function deleteComment() {
     try {
-      console.log('Fetching CSRF token...');
       const csrfToken = await fetchCsrfToken();
-      console.log('CSRF token retrieved:', csrfToken);
-
-      console.log(`Sending DELETE request to server for commentId: ${commentId}`);
       const response = await fetch(`http://localhost:8000/detail/delete-comment/${commentId}/`, {
         method: 'DELETE',
         headers: {
@@ -48,12 +45,9 @@
       });
 
       if (!response.ok) {
-        console.error('Failed to delete comment, response status:', response.status);
         throw new Error('Failed to delete comment');
       }
 
-      console.log('Comment successfully deleted, updating UI...');
-      // Notify parent about the deletion
       dispatch('delete', { commentId });
     } catch (error) {
       console.error('Error deleting comment:', error);
@@ -61,10 +55,42 @@
     }
   }
 
-
   // Function to handle edit action
-  function editComment() {
-    // Implement edit functionality here
+  function startEdit() {
+    isEditing = true;
+  }
+
+  async function saveEdit() {
+    if (editedText.trim()) {
+      try {
+        const csrfToken = await fetchCsrfToken();
+        const response = await fetch(`http://localhost:8000/detail/edit-comment/${commentId}/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ content: editedText }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save edit');
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          text = editedText;
+          isEditing = false;
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.error('Error saving edit:', error);
+        alert('Failed to save edit. Please try again.');
+      }
+    }
   }
 
   function toggleReplies() {
@@ -162,14 +188,21 @@
       <div class="comment-options" on:click={() => showOptions = !showOptions}>
         <i class="bi bi-three-dots"></i>
         {#if showOptions}
-          <CommentOptionsMenu onEdit={editComment} onDelete={deleteComment} />
+          <CommentOptionsMenu onEdit={startEdit} onDelete={deleteComment} />
         {/if}
       </div>
     {/if}
   </div>
 
-  <!-- Conditionally Render Comment Text -->
-  <p class="comment-text">{text === '[Deleted]' ? 'This comment was deleted' : text}</p>
+  {#if isEditing}
+    <div class="comment-edit">
+      <RichTextEditor bind:newComment={editedText} />
+      <SubmitCommentButton onSubmit={saveEdit} isDisabled={!editedText.trim()} />
+    </div>
+  {:else}
+    <!-- Conditionally Render Comment Text -->
+    <p class="comment-text">{text === '[Deleted]' ? 'This comment was deleted' : text}</p>
+  {/if}
 
   {#if text !== '[Deleted]'}
     <CommentActions 
@@ -203,6 +236,7 @@
     </div>
   {/if}
 </div>
+
 
 
 <style>

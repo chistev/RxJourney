@@ -7,7 +7,7 @@
     import SubmitCommentButton from './SubmitCommentButton.svelte';
     import { fetchCsrfToken } from '../utils';
     import { userStore } from '../stores/userStore';
-  
+    
     let post;
     let comments = [];
     let newComment = '';
@@ -15,16 +15,16 @@
     let loading = false;
     let sortOrder = 'oldest';  // Default sort order
     const dispatch = createEventDispatcher();
-  
+    
     const unsubscribe = postStore.subscribe(value => {
       post = value;
       fetchComments();
     });
-  
+    
     const unsubscribeUser = userStore.subscribe(user => {
       currentUsername = user.username;
     });
-  
+    
     async function fetchComments() {
       loading = true;
       try {
@@ -36,6 +36,45 @@
       } finally {
         loading = false;
       }
+    }
+  
+    async function handleEditComment({ commentId, newContent }) {
+      try {
+        const csrfToken = await fetchCsrfToken();
+        const response = await fetch(`http://localhost:8000/detail/edit-comment/${commentId}/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ content: newContent }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update comment');
+        }
+  
+        const result = await response.json();
+  
+        if (result.status === 'success') {
+          comments = comments.map(comment =>
+            comment.id === commentId
+              ? { ...comment, text: newContent }
+              : comment
+          );
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.error('Error updating comment:', error);
+        alert('Failed to update comment. Please try again.');
+      }
+    }
+  
+    function handleEdit(event) {
+      const { commentId, newContent } = event.detail;
+      handleEditComment({ commentId, newContent });
     }
   
     async function handleCommentSubmit() {
@@ -135,12 +174,13 @@
           replies={comment.replies}
           commentId={comment.id} 
           post={post}  
+          on:edit={handleEdit}
           on:delete={handleDelete}
         />
       {/each}
     {/if}
   </div>
-  
+    
 <style>
 .loading-indicator {
     font-size: 16px;
