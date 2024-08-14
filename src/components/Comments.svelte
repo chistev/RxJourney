@@ -2,6 +2,8 @@
   import RichTextEditor from '../components/RichTextEditor.svelte';
   import Comments from '../components/Comments.svelte';
   import SubmitCommentButton from './SubmitCommentButton.svelte';
+  import { userStore } from '../stores/userStore';
+
 
   export let username;
   export let avatar;
@@ -13,6 +15,13 @@
   let showReplies = false;
   let replying = false;
   let replyText = '';
+
+  // Access the store
+  let currentUser = {};
+    userStore.subscribe(user => {
+        currentUser = user; // Update the currentUser with store value
+    });
+
 
   function toggleReplies() {
     showReplies = !showReplies;
@@ -28,7 +37,7 @@
         ...replies,
         {
           id: replies.length + 1, // Ensure unique id
-          username: 'Current User',
+          username: currentUser.username, 
           avatar: 'bi-person',
           time: 'Just now',
           text: replyText,

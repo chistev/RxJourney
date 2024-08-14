@@ -6,15 +6,22 @@
     import Comments from './Comments.svelte';
     import SubmitCommentButton from './SubmitCommentButton.svelte';
     import { fetchCsrfToken } from '../utils';
+    import { userStore } from '../stores/userStore';
 
     let post;
     let comments = [];
     let newComment = '';
+    let currentUsername = ''; 
     const dispatch = createEventDispatcher();
 
     const unsubscribe = postStore.subscribe(value => {
         post = value;
         comments = post.comments || [];
+    });
+
+    // Subscribe to userStore to get the username
+    const unsubscribeUser = userStore.subscribe(user => {
+        currentUsername = user.username; // Get the username from the store
     });
 
     async function handleCommentSubmit() {
@@ -50,7 +57,7 @@
                 comments = [
                     {
                         id: result.commentId,
-                        username: 'Current User',
+                        username: currentUsername,
                         avatar: 'bi-person',
                         time: 'Just now',
                         text: newComment,
@@ -70,6 +77,7 @@
     onMount(() => {
         return () => {
             unsubscribe();
+            unsubscribeUser(); 
         };
     });
 </script>
