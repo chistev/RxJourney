@@ -19,18 +19,31 @@
         comments = post.comments || [];
     });
 
-    // Subscribe to userStore to get the username
     const unsubscribeUser = userStore.subscribe(user => {
-        currentUsername = user.username; // Get the username from the store
+        currentUsername = user.username;
     });
 
     async function handleCommentSubmit() {
-        const csrfToken = await fetchCsrfToken();
+        const commentContent = newComment;
+        const tempCommentId = Date.now(); // Temporary ID for optimistic comment rendering
 
-        const postId = post.id;
-        const parentId = null;
+        // Optimistically add the comment
+        const newCommentObj = {
+            id: tempCommentId,
+            username: currentUsername,
+            avatar: 'bi-person',
+            time: 'Just now',
+            text: commentContent,
+            likes: 0,
+            replies: [],
+            isTemp: true // Flag to identify it as an optimistic comment
+        };
+
+        comments = [newCommentObj, ...comments];
+        newComment = ''; // Clear the input
 
         try {
+            const csrfToken = await fetchCsrfToken();
             const response = await fetch('http://localhost:8000/detail/add-comment/', {
                 method: 'POST',
                 headers: {
@@ -39,9 +52,9 @@
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                    postId: postId,
-                    content: newComment,
-                    parentId: parentId
+                    postId: post.id,
+                    content: commentContent,
+                    parentId: null
                 }),
             });
 
@@ -52,25 +65,21 @@
             const result = await response.json();
 
             if (result.status === 'success') {
-                newComment = '';
-                // Add the new comment to the local comments array
-                comments = [
-                    {
-                        id: result.commentId,
-                        username: currentUsername,
-                        avatar: 'bi-person',
-                        time: 'Just now',
-                        text: newComment,
-                        likes: 0,
-                        replies: []
-                    },
-                    ...comments,
-                ];
+                // Update the optimistic comment with the real ID from the server
+                comments = comments.map(comment =>
+                    comment.id === tempCommentId
+                        ? { ...comment, id: result.commentId, isTemp: false }
+                        : comment
+                );
             } else {
-                console.error('Failed to submit comment:', result.message);
+                throw new Error(result.message);
             }
         } catch (error) {
             console.error('Error submitting comment:', error);
+
+            // Remove the optimistic comment if there's an error
+            comments = comments.filter(comment => comment.id !== tempCommentId);
+            alert('Failed to submit comment. Please try again.');
         }
     }
 
@@ -105,6 +114,7 @@
         />
     {/each}
 </div>
+
 
 
 <style>
