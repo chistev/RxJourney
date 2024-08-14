@@ -5,6 +5,7 @@
   import { fetchCsrfToken } from '../utils';
   import Comments from '../components/Comments.svelte';
   import { onMount, onDestroy } from "svelte";
+	import CommentOptionsMenu from './CommentOptionsMenu.svelte';
 
   export let username;
   export let avatar;
@@ -157,10 +158,7 @@
       <div class="comment-options" on:click={() => showOptions = !showOptions}>
         <i class="bi bi-three-dots"></i>
         {#if showOptions}
-          <div class="options-menu">
-            <button on:click={editComment}>Edit this response</button>
-            <button on:click={deleteComment}>Delete</button>
-          </div>
+        <CommentOptionsMenu onEdit={editComment} onDelete={deleteComment} />
         {/if}
       </div>
     {/if}
@@ -310,26 +308,5 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     padding: 5px 0;
     z-index: 10;
-  }
-
-  .options-menu button {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #191919;
-    line-height: 24px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background: #fff;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  .options-menu button:hover {
-    background: #f0f0f0;
   }
 </style>
