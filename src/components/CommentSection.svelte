@@ -12,22 +12,36 @@
     let comments = [];
     let newComment = '';
     let currentUsername = ''; 
+    let loading = false;
+    let sortOrder = 'most-relevant';  // Default sort order
     const dispatch = createEventDispatcher();
 
     const unsubscribe = postStore.subscribe(value => {
         post = value;
-        comments = post.comments || [];
+        fetchComments();
     });
 
     const unsubscribeUser = userStore.subscribe(user => {
         currentUsername = user.username;
     });
 
+    async function fetchComments() {
+        loading = true;
+        try {
+            const response = await fetch(`http://localhost:8000/detail/comments/${post.id}/?order=${sortOrder}`);
+            const result = await response.json();
+            comments = result.comments;
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        } finally {
+            loading = false;
+        }
+    }
+
     async function handleCommentSubmit() {
         const commentContent = newComment;
-        const tempCommentId = Date.now(); // Temporary ID for optimistic comment rendering
+        const tempCommentId = Date.now();
 
-        // Optimistically add the comment
         const newCommentObj = {
             id: tempCommentId,
             username: currentUsername,
@@ -36,11 +50,11 @@
             text: commentContent,
             likes: 0,
             replies: [],
-            isTemp: true // Flag to identify it as an optimistic comment
+            isTemp: true
         };
 
         comments = [newCommentObj, ...comments];
-        newComment = ''; // Clear the input
+        newComment = '';
 
         try {
             const csrfToken = await fetchCsrfToken();
@@ -65,7 +79,6 @@
             const result = await response.json();
 
             if (result.status === 'success') {
-                // Update the optimistic comment with the real ID from the server
                 comments = comments.map(comment =>
                     comment.id === tempCommentId
                         ? { ...comment, id: result.commentId, isTemp: false }
@@ -76,11 +89,14 @@
             }
         } catch (error) {
             console.error('Error submitting comment:', error);
-
-            // Remove the optimistic comment if there's an error
             comments = comments.filter(comment => comment.id !== tempCommentId);
             alert('Failed to submit comment. Please try again.');
         }
+    }
+
+    function handleSortChange(event) {
+        sortOrder = event.detail.sortOrder;
+        fetchComments();
     }
 
     onMount(() => {
@@ -101,23 +117,33 @@
 
     <RichTextEditor bind:newComment={newComment} />
     <SubmitCommentButton onSubmit={handleCommentSubmit} isDisabled={!newComment.trim()} />
-    <CommentDropdown />
+    <CommentDropdown on:sortChange={handleSortChange} />
 
-    {#each comments as comment (comment.id)}
-        <Comments
-            username={comment.username}
-            avatar={comment.avatar}
-            time={comment.time}
-            text={comment.text}
-            likes={comment.likes}
-            replies={comment.replies}
-        />
-    {/each}
+    {#if loading}
+        <div class="loading-indicator">Loading...</div>
+    {:else}
+        {#each comments as comment (comment.id)}
+            <Comments
+                username={comment.username}
+                avatar={comment.avatar}
+                time={comment.time}
+                text={comment.text}
+                likes={comment.likes}
+                replies={comment.replies}
+            />
+        {/each}
+    {/if}
 </div>
 
 
 
 <style>
+.loading-indicator {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
   .comment-section {
     position: fixed;
     right: 0;

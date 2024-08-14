@@ -1,9 +1,21 @@
+<script>
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
+    function handleSortChange(event) {
+        const selectedOrder = event.target.value;
+        dispatch('sortChange', { sortOrder: selectedOrder });
+    }
+</script>
+
 <div class="comment-dropdown mt-5">
-    <select class="dropdown">
+    <select class="dropdown" on:change={handleSortChange}>
         <option value="most-relevant">Most Relevant</option>
         <option value="newest">Most Recent</option>
     </select>
 </div>
+
 
 <style>
     .comment-dropdown {
