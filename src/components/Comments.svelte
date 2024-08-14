@@ -5,8 +5,11 @@
   import { fetchCsrfToken, formatDate } from '../utils';
   import Comments from '../components/Comments.svelte';
   import { onMount, onDestroy } from "svelte";
-	import CommentOptionsMenu from './CommentOptionsMenu.svelte';
-	import CommentActions from './CommentActions.svelte';
+  import CommentOptionsMenu from './CommentOptionsMenu.svelte';
+  import CommentActions from './CommentActions.svelte';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   export let username;
   export let avatar;
@@ -15,6 +18,7 @@
   export let replies = [];
   export let commentId;
   export let post;
+  export let parentReplies = [];
 
   let showReplies = false;
   let replying = false;
@@ -29,7 +33,11 @@
   // Function to handle delete action
   async function deleteComment() {
     try {
+      console.log('Fetching CSRF token...');
       const csrfToken = await fetchCsrfToken();
+      console.log('CSRF token retrieved:', csrfToken);
+
+      console.log(`Sending DELETE request to server for commentId: ${commentId}`);
       const response = await fetch(`http://localhost:8000/detail/delete-comment/${commentId}/`, {
         method: 'DELETE',
         headers: {
@@ -40,21 +48,23 @@
       });
 
       if (!response.ok) {
+        console.error('Failed to delete comment, response status:', response.status);
         throw new Error('Failed to delete comment');
       }
 
-      // Remove comment from local list or handle as needed
-      // You might need to trigger a re-fetch or update parent component
+      console.log('Comment successfully deleted, updating UI...');
+      // Notify parent about the deletion
+      dispatch('delete', { commentId });
     } catch (error) {
       console.error('Error deleting comment:', error);
       alert('Failed to delete comment. Please try again.');
     }
   }
 
+
   // Function to handle edit action
   function editComment() {
     // Implement edit functionality here
-    // This might involve showing a form or modal to edit the comment
   }
 
   function toggleReplies() {
@@ -122,30 +132,23 @@
     }
   }
 
-  // Determine if the current user is the author of the comment
   const isOwner = currentUser.username === username;
 
-  // Close the options menu when clicking outside
   function handleClickOutside(event) {
     if (!event.target.closest('.comment-options')) {
       showOptions = false;
     }
   }
 
-  // Add event listener when component is mounted
   function addClickListener() {
     document.addEventListener('click', handleClickOutside);
   }
 
-  // Remove event listener when component is destroyed
   function removeClickListener() {
     document.removeEventListener('click', handleClickOutside);
   }
 
-  // Call addClickListener when the component is mounted
   onMount(addClickListener);
-
-  // Call removeClickListener when the component is destroyed
   onDestroy(removeClickListener);
 </script>
 
@@ -159,17 +162,23 @@
       <div class="comment-options" on:click={() => showOptions = !showOptions}>
         <i class="bi bi-three-dots"></i>
         {#if showOptions}
-        <CommentOptionsMenu onEdit={editComment} onDelete={deleteComment} />
+          <CommentOptionsMenu onEdit={editComment} onDelete={deleteComment} />
         {/if}
       </div>
     {/if}
   </div>
-  <p class="comment-text">{text}</p>
-  <CommentActions {showReplies} 
-  {replies} 
-  onToggleReplies={toggleReplies} 
-  onToggleReply={toggleReply} 
-/>
+
+  <!-- Conditionally Render Comment Text -->
+  <p class="comment-text">{text === '[Deleted]' ? 'This comment was deleted' : text}</p>
+
+  {#if text !== '[Deleted]'}
+    <CommentActions 
+      {showReplies} 
+      {replies} 
+      onToggleReplies={toggleReplies} 
+      onToggleReply={toggleReply} 
+    />
+  {/if}
 
   {#if replying}
     <div class="reply-input">
