@@ -7,7 +7,6 @@ const defaultComment = {
   avatar: 'https://via.placeholder.com/30', // Default avatar
   time: '',
   text: '',
-  likes: 0,
   replies: [], // List of replies
 };
 
@@ -32,6 +31,7 @@ export function updatePostWithComments(post) {
     slug: post.slug,
     content: post.content,
     total_likes: post.total_likes,
+    created_at: post.created_at,
     comments: post.comments.map(comment => ({
       ...defaultComment,
       id: comment.id,
@@ -39,7 +39,6 @@ export function updatePostWithComments(post) {
       avatar: 'bi-person', // Use Bootstrap icon class
       time: comment.created_at,
       text: comment.content,
-      likes: comment.likes,
       replies: comment.replies || [] // Ensure replies are included
     })),
     liked: post.liked
