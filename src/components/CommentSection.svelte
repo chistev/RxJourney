@@ -136,8 +136,6 @@
     {/if}
 </div>
 
-
-
 <style>
 .loading-indicator {
     font-size: 16px;

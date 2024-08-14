@@ -1,26 +1,59 @@
 <script>
+  import { userStore } from '../stores/userStore';
   import RichTextEditor from '../components/RichTextEditor.svelte';
   import SubmitCommentButton from './SubmitCommentButton.svelte';
-  import { userStore } from '../stores/userStore';
-  import Comments from '../components/Comments.svelte'
   import { fetchCsrfToken } from '../utils';
+  import Comments from '../components/Comments.svelte';
+  import { onMount, onDestroy } from "svelte";
 
   export let username;
   export let avatar;
   export let time;
   export let text;
   export let replies = [];
-  export let commentId;  
-  export let post;  
+  export let commentId;
+  export let post;
 
   let showReplies = false;
   let replying = false;
   let replyText = '';
-
+  let showOptions = false;
   let currentUser = {};
+
   userStore.subscribe(user => {
-      currentUser = user;
+    currentUser = user;
   });
+
+  // Function to handle delete action
+  async function deleteComment() {
+    try {
+      const csrfToken = await fetchCsrfToken();
+      const response = await fetch(`http://localhost:8000/detail/delete-comment/${commentId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete comment');
+      }
+
+      // Remove comment from local list or handle as needed
+      // You might need to trigger a re-fetch or update parent component
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Failed to delete comment. Please try again.');
+    }
+  }
+
+  // Function to handle edit action
+  function editComment() {
+    // Implement edit functionality here
+    // This might involve showing a form or modal to edit the comment
+  }
 
   function toggleReplies() {
     showReplies = !showReplies;
@@ -86,6 +119,32 @@
       }
     }
   }
+
+  // Determine if the current user is the author of the comment
+  const isOwner = currentUser.username === username;
+
+  // Close the options menu when clicking outside
+  function handleClickOutside(event) {
+    if (!event.target.closest('.comment-options')) {
+      showOptions = false;
+    }
+  }
+
+  // Add event listener when component is mounted
+  function addClickListener() {
+    document.addEventListener('click', handleClickOutside);
+  }
+
+  // Remove event listener when component is destroyed
+  function removeClickListener() {
+    document.removeEventListener('click', handleClickOutside);
+  }
+
+  // Call addClickListener when the component is mounted
+  onMount(addClickListener);
+
+  // Call removeClickListener when the component is destroyed
+  onDestroy(removeClickListener);
 </script>
 
 <div class="comment">
@@ -94,6 +153,17 @@
 
     <span class="comment-username">{username}</span>
     <span class="comment-time">{time}</span>
+    {#if isOwner}
+      <div class="comment-options" on:click={() => showOptions = !showOptions}>
+        <i class="bi bi-three-dots"></i>
+        {#if showOptions}
+          <div class="options-menu">
+            <button on:click={editComment}>Edit this response</button>
+            <button on:click={deleteComment}>Delete</button>
+          </div>
+        {/if}
+      </div>
+    {/if}
   </div>
   <p class="comment-text">{text}</p>
   <div class="comment-actions">
@@ -146,6 +216,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+    position: relative; /* Needed for options menu positioning */
   }
 
   .comment-avatar {
@@ -162,22 +233,30 @@
   }
 
   .comment-username {
-    font-weight: 600;
-    font-size: 0.95em;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
     color: #242424;
+    line-height: 20px;
     margin-right: 10px;
   }
 
   .comment-time {
-    font-size: 0.85em;
-    color: #777;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #6b6b6b;
+    line-height: 20px;
   }
 
   .comment-text {
-    font-size: 0.9em;
-    color: #333;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #242424;
+    line-height: 24px;
     margin-bottom: 10px;
-    line-height: 1.4;
+    line-height: 24px;
   }
 
   .comment-actions {
@@ -188,16 +267,15 @@
     color: #777;
   }
 
-  .comment-actions i {
-    font-size: 1.2em;
-    cursor: pointer;
-    color: #777;
-  }
-
   .comment-reply {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #242424;
+    line-height: 24px;
+    margin-bottom: 10px;
+    line-height: 20px;
     cursor: pointer;
-    color: #007BFF;
-    font-weight: 500;
   }
 
   .comment-reply:hover {
@@ -214,5 +292,44 @@
     margin-left: 20px;
     padding-left: 10px;
     border-left: 1px solid #e0e0e0;
+  }
+
+  .comment-options {
+    cursor: pointer;
+    color: #777;
+    font-size: 1.2em;
+    margin-left: auto;
+  }
+
+  .options-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    padding: 5px 0;
+    z-index: 10;
+  }
+
+  .options-menu button {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #191919;
+    line-height: 24px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .options-menu button:hover {
+    background: #f0f0f0;
   }
 </style>
