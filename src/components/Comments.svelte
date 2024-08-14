@@ -2,10 +2,11 @@
   import { userStore } from '../stores/userStore';
   import RichTextEditor from '../components/RichTextEditor.svelte';
   import SubmitCommentButton from './SubmitCommentButton.svelte';
-  import { fetchCsrfToken } from '../utils';
+  import { fetchCsrfToken, formatDate } from '../utils';
   import Comments from '../components/Comments.svelte';
   import { onMount, onDestroy } from "svelte";
 	import CommentOptionsMenu from './CommentOptionsMenu.svelte';
+	import CommentActions from './CommentActions.svelte';
 
   export let username;
   export let avatar;
@@ -153,7 +154,7 @@
     <i class={`comment-avatar ${avatar}`}></i>
 
     <span class="comment-username">{username}</span>
-    <span class="comment-time">{time}</span>
+    <span class="comment-time">{formatDate(time)}</span>
     {#if isOwner}
       <div class="comment-options" on:click={() => showOptions = !showOptions}>
         <i class="bi bi-three-dots"></i>
@@ -164,18 +165,11 @@
     {/if}
   </div>
   <p class="comment-text">{text}</p>
-  <div class="comment-actions">
-    <span class="comment-reply" on:click={toggleReplies}>
-      {#if showReplies}
-        Hide Replies
-      {:else}
-        {replies.length} Replies
-      {/if}
-    </span>
-    <span class="comment-reply" on:click={toggleReply}>
-      Reply
-    </span>
-  </div>
+  <CommentActions {showReplies} 
+  {replies} 
+  onToggleReplies={toggleReplies} 
+  onToggleReply={toggleReply} 
+/>
 
   {#if replying}
     <div class="reply-input">
