@@ -1,5 +1,5 @@
 <script>
-    export let coffeeUrl = "https://www.buymeacoffee.com/yourusername";
+    export let coffeeUrl = "https://buymeacoffee.com/chistev12";
     export let flutterwaveUrl = "https://www.flutterwave.com/donate/yourusername";
 </script>
 

@@ -26,6 +26,18 @@
       }
     }
   
+    function shareOnTwitter() {
+      const currentUrl = encodeURIComponent(window.location.href);
+      const twitterShareUrl = `https://twitter.com/intent/tweet?url=${currentUrl}`;
+      window.open(twitterShareUrl, '_blank');
+    }
+  
+    function shareOnFacebook() {
+      const currentUrl = encodeURIComponent(window.location.href);
+      const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+      window.open(facebookShareUrl, '_blank');
+    }
+  
     onMount(() => {
       if (typeof document !== 'undefined') {
         document.addEventListener('click', closeShareOptions);
@@ -46,10 +58,10 @@
         <div class="share-option" on:click={copyLink}>
           <i class="bi bi-link-45deg"></i> Copy link
         </div>
-        <div class="share-option">
+        <div class="share-option" on:click={shareOnTwitter}>
           <i class="bi bi-twitter"></i> Share on Twitter
         </div>
-        <div class="share-option">
+        <div class="share-option" on:click={shareOnFacebook}>
           <i class="bi bi-facebook"></i> Share on Facebook
         </div>
       </div>
@@ -59,6 +71,8 @@
       <div class="copy-notification">Link copied to clipboard!</div>
     {/if}
   </div>
+  
+  
   
   <style>
     .share-options {
