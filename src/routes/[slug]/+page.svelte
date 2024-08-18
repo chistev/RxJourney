@@ -82,14 +82,13 @@ onDestroy(() => {
   <!-- Divider line -->
   <div class="divider"></div>
 
-  <h2 class="more-from-heading text-center">More from Chistev</h2>
-  <MorePosts/>
+  <MorePosts currentSlug={post.slug} />
+
 
   <div class="divider"></div>
 
-  <!-- Button to see all posts -->
   <div class="see-all-button-container">
-      <button class="see-all-button">See all from Chistev</button>
+    <a href="/" class="see-all-button text-decoration-none">See all from Chistev</a>
   </div>
 </div>
 
