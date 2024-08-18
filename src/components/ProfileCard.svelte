@@ -1,12 +1,69 @@
 <script>
-  export let backgroundColor = "white"; // Default background color
+  export let backgroundColor = "white";
   import { onMount } from "svelte";
-  
+  import { fetchCsrfToken } from '../utils';
+
   let showTooltip = false;
   let subscriberCount = 0;
+  let isSubscribed = false;
+  let isLoading = true; // Track loading state
 
   function toggleTooltip() {
     showTooltip = !showTooltip;
+  }
+
+  async function subscribe() {
+    try {
+      const csrfToken = await fetchCsrfToken();
+      const response = await fetch('http://localhost:8000/home/subscribe/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        isSubscribed = true;
+        subscriberCount += 1;
+      } else {
+        console.error('Failed to subscribe:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error subscribing:', error);
+    }
+  }
+
+  async function unsubscribe() {
+    try {
+      const csrfToken = await fetchCsrfToken();
+      const response = await fetch('http://localhost:8000/home/unsubscribe/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        isSubscribed = false;
+        subscriberCount -= 1;
+      } else {
+        console.error('Failed to unsubscribe:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error unsubscribing:', error);
+    }
+  }
+
+  function handleSubscription() {
+    if (isSubscribed) {
+      unsubscribe();
+    } else {
+      subscribe();
+    }
   }
 
   function handleClickOutside(event) {
@@ -18,13 +75,21 @@
   onMount(async () => {
     document.addEventListener('click', handleClickOutside);
 
-    // Fetch the subscriber count
     try {
-      const response = await fetch('http://localhost:8000/home/subscriber-count/');
-      const data = await response.json();
-      subscriberCount = data.subscriber_count;
+      const countResponse = await fetch('http://localhost:8000/home/subscriber-count/');
+      const countData = await countResponse.json();
+      subscriberCount = countData.subscriber_count;
+
+      const subscriptionResponse = await fetch('http://localhost:8000/home/check-subscription/', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const subscriptionData = await subscriptionResponse.json();
+      isSubscribed = subscriptionData.is_subscribed;
     } catch (error) {
-      console.error('Error fetching subscriber count:', error);
+      console.error('Error fetching data:', error);
+    } finally {
+      isLoading = false; // Loading complete
     }
 
     return () => document.removeEventListener('click', handleClickOutside);
@@ -37,16 +102,29 @@
   <p>{subscriberCount} subscribers</p>
   <p>Intern Pharmacist and Web developer</p>
   <div class="tooltip-container">
-    <button class="secondary" on:click={toggleTooltip}>
-      <!-- Conditional rendering for smaller screens -->
-      <span class="icon-only"><i class="bi bi-newspaper fs-2"></i></span>
-      <span class="text-only">Subscribe</span>
+    <button class="secondary" on:click={handleSubscription} on:mouseenter={toggleTooltip} on:mouseleave={toggleTooltip} disabled={isLoading}>
+      <span class="icon-only">
+        {#if isLoading}
+          <i class="bi bi-hourglass-split fs-2"></i> <!-- Loading icon -->
+        {:else if isSubscribed}
+          <i class="bi bi-check-circle fs-2"></i> <!-- Subscribed icon -->
+        {:else}
+          <i class="bi bi-newspaper fs-2"></i> <!-- Unsubscribed icon -->
+        {/if}
+      </span>
+      <span class="text-only">
+        {isLoading ? 'Loading...' : isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+      </span>
     </button>
-    <div class="tooltip">
-      Subscribe to get an email whenever Chistev publishes.
-    </div>
+    {#if showTooltip && !isLoading}
+      <div class="tooltip">
+        {isSubscribed ? 'Unsubscribe to stop receiving notifications.' : 'Subscribe to get an email whenever Chistev publishes.'}
+      </div>
+    {/if}
   </div>
 </div>
+
+
 
 
 <style>
