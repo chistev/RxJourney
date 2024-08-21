@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { formatDate } from '../utils';
 
   let randomPosts = [];
 
@@ -28,31 +29,22 @@
 </script>
 
 {#if randomPosts.length > 0}
-  <div class="divider"></div> <!-- Divider line -->
+  <div class="divider"></div>
   <h2 class="more-from-heading text-center">More from Chistev</h2>
 
-<div class="more-posts-container">
-      {#each randomPosts as post}
-          <div class="post-card">
-              {#if post.image}
-                  <img src={post.image} alt={post.title} />
-              {/if}
-              <div class="post-card-title">{post.title}</div>
-              <div class="post-card-meta">{new Date(post.created_at).toLocaleDateString()}</div>
-              <div class="post-card-content">{@html post.content}</div>
-              <div class="post-icons">
-                  <div class="post-icons-left">
-                      <span><i class="bi bi-hand-thumbs-up-fill"></i> {post.likes}</span>
-                      <span><i class="bi bi-chat-right-fill"></i> {post.comments}</span>
-                  </div>
-                  <div class="post-icons-right">
-                      <i class="bi bi-share-fill"></i>
-                  </div>
-              </div>
-          </div>
-      {/each}
-</div>
+  <div class="more-posts-container">
+    {#each randomPosts as post}
+      <a href={`/${post.slug}`} class="post-card-link">
+        <div class="post-card">
+          <div class="post-card-title">{post.title}</div>
+          <div class="post-card-meta">{formatDate(post.created_at)}</div>
+          <div class="post-card-content">{@html post.content}</div>
+        </div>
+      </a>
+    {/each}
+  </div>
 {/if}
+
 <style>
   .more-posts-container {
     display: grid;
@@ -63,12 +55,19 @@
     background-color: #f9f9f9;
   }
 
+  .post-card-link {
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+  }
+
   .post-card {
     background-color: #f9f9f9;
     border-radius: 8px;
     padding: 10px;
     max-width: 300px;
     margin: 0 auto;
+    transition: background-color 0.3s; 
   }
 
   .post-card img {
@@ -103,28 +102,9 @@
     line-height: 22px;
   }
 
-  .post-icons {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.9em;
-    color: #777;
-  }
-
-  .post-icons-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .post-icons-left span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .post-icons i {
-    font-size: 1.5em; /* Uniform size for all icons */
+  .post-card-link:hover .post-card {
+    background-color: #e0e0e0; 
+    cursor: pointer; 
   }
 
   /* Media query for smaller screens */
@@ -135,8 +115,7 @@
 
     .post-card {
       max-width: 100%; /* Ensure cards take full width on smaller screens */
-      margin-bottom: 20px; /* Add space between cards */
+      margin-bottom: 20px;
     }
   }
 </style>
-

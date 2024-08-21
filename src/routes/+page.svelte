@@ -1,5 +1,4 @@
 <script>
-  import Modal from "../components/Modal.svelte";
 	import ProfileCard from "../components/ProfileCard.svelte";
   import HomeContent from "../components/HomeContent.svelte";
 
@@ -41,8 +40,6 @@
 
   <ProfileCard/>
 </div>
-<Modal modalId="exampleModal" modalTitle="Create an account to like or comment." />
-
 <style>
   .container {
     display: flex;
