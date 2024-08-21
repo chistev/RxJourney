@@ -16,6 +16,25 @@
   }
 </script>
 
+<ul class="article-list">
+  {#each posts as post}
+    <li class="article-item" on:click={() => goToPostDetail(post.slug)}>
+      <div class="article-content">
+        <h2>{post.title}</h2>
+        <p>{@html truncateText(post.content, 250)}</p>
+        <div class="article-meta">
+          <span>{formatDate(post.created_at)}</span>
+          <span><i class="bi bi-hand-thumbs-up-fill"></i> {post.total_likes}</span>
+          <span><i class="bi bi-chat-right-fill"></i> {post.comments.length}</span>
+        </div>
+      </div>
+      {#if post.image}
+        <img src={post.image} alt={post.title} />
+      {/if}
+    </li>
+  {/each}
+</ul>
+
 <style>
   .article-list {
     list-style: none;
@@ -66,21 +85,3 @@
   }
 </style>
 
-<ul class="article-list">
-  {#each posts as post}
-    <li class="article-item" on:click={() => goToPostDetail(post.slug)}>
-      <div class="article-content">
-        <h2>{post.title}</h2>
-        <p>{@html truncateText(post.content, 250)}</p>
-        <div class="article-meta">
-          <span>{formatDate(post.created_at)}</span>
-          <span><i class="bi bi-hand-thumbs-up-fill"></i> {post.likes}</span>
-          <span><i class="bi bi-chat-right-fill"></i> {post.comments}</span>
-        </div>
-      </div>
-      {#if post.image}
-        <img src={post.image} alt={post.title} />
-      {/if}
-    </li>
-  {/each}
-</ul>

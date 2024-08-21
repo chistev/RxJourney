@@ -22,6 +22,27 @@
   }
 </script>
 
+<div class="container">
+  <div class="main-content">
+    <div class="header">
+      <h1 class="mb-4">Chistev</h1>
+      <div class="nav-links">
+        <a href="#" class={currentTab === 'home' ? 'active' : ''} on:click={() => navigateTo('home')}>Home</a>
+        <a href="#" class={currentTab === 'about' ? 'active' : ''} on:click={() => navigateTo('about')}>About</a>
+      </div>
+    </div>
+
+    {#if currentTab === 'home'}
+    <HomeContent {posts}/>
+    {:else if currentTab === 'about'}
+      <AboutContent/>
+    {/if}
+  </div>
+
+  <ProfileCard/>
+</div>
+<Modal modalId="exampleModal" modalTitle="Create an account to like or comment." />
+
 <style>
   .container {
     display: flex;
@@ -79,25 +100,3 @@
     }
   }
 </style>
-
-
-<div class="container">
-  <div class="main-content">
-    <div class="header">
-      <h1 class="mb-4">Chistev</h1>
-      <div class="nav-links">
-        <a href="#" class={currentTab === 'home' ? 'active' : ''} on:click={() => navigateTo('home')}>Home</a>
-        <a href="#" class={currentTab === 'about' ? 'active' : ''} on:click={() => navigateTo('about')}>About</a>
-      </div>
-    </div>
-
-    {#if currentTab === 'home'}
-    <HomeContent {posts}/>
-    {:else if currentTab === 'about'}
-      <AboutContent/>
-    {/if}
-  </div>
-
-  <ProfileCard/>
-</div>
-<Modal modalId="exampleModal" modalTitle="Create an account to like or comment." />
