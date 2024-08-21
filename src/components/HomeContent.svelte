@@ -1,8 +1,7 @@
 <script>
   export let posts;
-  import {formatDate } from '../utils';
+  import { formatDate } from '../utils';
 
-  // Function to truncate text to a specified length
   function truncateText(text, maxLength) {
     if (text.length > maxLength) {
       return text.slice(0, maxLength) + '...';
@@ -10,7 +9,6 @@
     return text;
   }
 
-  // Function to handle click and navigate to the post detail page
   function goToPostDetail(postSlug) {
     window.location.href = `/${postSlug}`;
   }
@@ -18,19 +16,28 @@
 
 <ul class="article-list">
   {#each posts as post}
-    <li class="article-item" on:click={() => goToPostDetail(post.slug)}>
-      <div class="article-content">
-        <h2>{post.title}</h2>
-        <p>{@html truncateText(post.content, 250)}</p>
-        <div class="article-meta">
-          <span>{formatDate(post.created_at)}</span>
-          <span><i class="bi bi-hand-thumbs-up-fill"></i> {post.total_likes}</span>
-          <span><i class="bi bi-chat-right-fill"></i> {post.comments.length}</span>
+    <li class="article-item">
+      <button
+        type="button"
+        class="article-link"
+        on:click={() => goToPostDetail(post.slug)}
+        on:keydown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            goToPostDetail(post.slug);
+          }
+        }}
+      >
+        <div class="article-content">
+          <h2>{post.title}</h2>
+          <p>{@html truncateText(post.content, 250)}</p>
+          <div class="article-meta">
+            <span>{formatDate(post.created_at)}</span>
+          </div>
         </div>
-      </div>
-      {#if post.image}
-        <img src={post.image} alt={post.title} />
-      {/if}
+        {#if post.image}
+          <img src={post.image} alt={post.title} />
+        {/if}
+      </button>
     </li>
   {/each}
 </ul>
@@ -48,8 +55,22 @@
     margin-bottom: 20px;
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
-    max-width: 700px; /* Limit the width of the article item */
-    cursor: pointer; /* Indicate that the item is clickable */
+    max-width: 700px;
+  }
+
+  .article-link {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+  }
+
+  .article-link:focus {
+    outline: 2px solid #007bff; 
   }
 
   .article-item img {
@@ -84,4 +105,3 @@
     color: #191919;
   }
 </style>
-

@@ -2,7 +2,6 @@
   import { postStore } from '../stores/postStore';
   import { fetchCsrfToken } from '../utils';
   import { onDestroy, createEventDispatcher, onMount } from 'svelte';
-  import CommentSection from '../components/CommentSection.svelte';
   import ShareOptions from '../components/ShareOptions.svelte';
 
   let post;
@@ -86,9 +85,7 @@
 
   <ShareOptions {showShareOptions} {toggleShareOptions} />
 
-  {#if showComments}
-    <CommentSection on:close={toggleComments} />
-  {/if}
+  
 </div>
 <style>
   .post-icons {
