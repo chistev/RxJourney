@@ -1,93 +1,94 @@
 <script>
-  import { fetchCsrfToken, validateEmail, checkEmail } from '../../utils';
-  import AlmostThere from '../../components/AlmostThere.svelte';
-  import ExpiredLink from '../../components/ExpiredLink.svelte';
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
 
-  export let data; // Import the data prop
-
-  let { valid, formData } = data; // Destructure the data prop
-  let email = '';
-  let emailError = '';
-  let csrfToken = '';
-  let emailExistsError = '';
-  let loading = false; 
-
-  async function handleContinue() {
-    emailError = validateEmail(email);
+  export let data;
   
-    if (!emailError) {
-      loading = true;
-      try {
-        csrfToken = await fetchCsrfToken();
-        const data = await checkEmail(email, csrfToken);
+  // Destructure the data prop
+  const { valid } = data;
+  
+  let message = '';
+  let isValid = false;
 
-        if (data.exists) {
-          emailExistsError = 'This email address is already registered.';
-        } else {
-          emailExistsError = ''; 
-          alert(`A new magic link has been sent to ${email}.`);
-          window.location.href = '/';
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        loading = false;
+  onMount(() => {
+      if (valid) {
+          message = `Thank you! Your subscription has been successfully confirmed.`;
+          isValid = true;
+
+          // Redirect to the homepage after 3 seconds
+          setTimeout(() => {
+              goto('/');
+          }, 3000);
+      } else {
+          message = `The confirmation link is invalid or has expired. Please try subscribing again.`;
       }
-    }
-  }
+  });
 </script>
+
+
+<div class="container">
+  <div class="main-content">
+      <div class="header">
+          <h1>Confirm Your Subscription</h1>
+      </div>
+      <div class="confirmation-message">
+          <p>{message}</p>
+          {#if isValid}
+              <p>You will be redirected to the homepage shortly...</p>
+          {/if}
+      </div>
+  </div>
+</div>
 
 <style>
   .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-    background-color: #fff;
-    padding: 20px;
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      flex-direction: column-reverse;
+  }
+
+  .main-content {
+      width: 100%;
   }
 
   .header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
   }
 
   .header h1 {
-    margin-left: 10px;
-    font-size: 24px;
-    font-weight: 500;
+      font-size: 36px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin-bottom: 10px;
+      font-weight: 500;
+      line-height: 42px;
+      color: #191919;
   }
 
-  h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+  .confirmation-message {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+      color: #333;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
   }
 
-  p {
-    margin-bottom: 20px;
-    font-size: 19px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  .confirmation-message p {
+      margin-bottom: 10px;
+  }
+
+  @media (min-width: 600px) {
+      .container {
+          flex-direction: row;
+      }
+
+      .main-content {
+          width: 75%;
+      }
   }
 </style>
-
-<div class="container">
-  <div class="header">
-    <h1><a href="/" style="text-decoration: none; color: inherit;">RxJourney</a></h1>
-  </div>
-
-  {#if valid}
-    <AlmostThere {formData} />
-  {:else}
-    <ExpiredLink
-      bind:email
-      {emailError}
-      {emailExistsError}
-      {loading}
-      {handleContinue}
-    />
-  {/if}
-</div>
