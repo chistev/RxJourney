@@ -4,7 +4,6 @@
 
   let randomPosts = [];
 
-  // Replace this slug with the current post's slug from your URL
   export let currentSlug;
 
   onMount(async () => {

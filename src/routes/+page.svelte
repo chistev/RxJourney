@@ -1,9 +1,9 @@
 <script>
-	import ProfileCard from "../components/ProfileCard.svelte";
+  import ProfileCard from "../components/ProfileCard.svelte";
   import HomeContent from "../components/HomeContent.svelte";
+  import AboutContent from "../components/AboutContent.svelte";
 
   import { goto } from '$app/navigation';
-	import AboutContent from "../components/AboutContent.svelte";
 
   export let data;
 
@@ -14,9 +14,9 @@
   function navigateTo(page) {
     currentTab = page;
     if (page === 'home') {
-      goto('/');
+      goto('/'); // Navigate to the home route
     } else if (page === 'about') {
-      goto('/about');
+      goto('/about'); // Navigate to the about route
     }
   }
 </script>
@@ -32,7 +32,7 @@
     </div>
 
     {#if currentTab === 'home'}
-    <HomeContent {posts}/>
+      <HomeContent {posts}/>
     {:else if currentTab === 'about'}
       <AboutContent/>
     {/if}
@@ -40,6 +40,7 @@
 
   <ProfileCard/>
 </div>
+
 <style>
   .container {
     display: flex;

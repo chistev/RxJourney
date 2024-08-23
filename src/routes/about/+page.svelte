@@ -8,8 +8,8 @@ import ProfileCard from "../../components/ProfileCard.svelte";
       <div class="header">
         <h1 class="mb-4">Chistev</h1>
         <div class="nav-links">
-          <a href="/" use:nav>Home</a>
-          <a href="/about" class="active" use:nav>About</a>
+          <a href="/" >Home</a>
+          <a href="/about" class="active">About</a>
         </div>
       </div>
   
