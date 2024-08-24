@@ -75,7 +75,7 @@
 <div class="profile-card" style="background-color: {backgroundColor};">
   <img src="/RxJourney.png" alt="Logo for RxJourney by Chistev, an Intern Pharmacist and Web Developer">
   <h2>Chistev</h2>
-  <p>{count} subscribers</p>
+  <p>{count} {count === 1 ? 'subscriber' : 'subscribers'}</p>
   <p>Intern Pharmacist and Web developer</p>
   <div class="subscribe-container">
     {#if showEmailInput}
