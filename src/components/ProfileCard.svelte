@@ -1,14 +1,23 @@
 <script>
   export let backgroundColor = "white";
-  import { onMount } from "svelte";
+  import { subscriberCount } from '../stores/subscriberStore';
+  import { onDestroy } from 'svelte';
   import { fetchCsrfToken } from '../utils';
 
   let showEmailInput = false;
   let email = "";
-  let subscriberCount = 0;
+  let count;
   let isLoading = false;
   let errorMessage = "";
   let successMessage = "";
+
+  const unsubscribe = subscriberCount.subscribe(value => {
+    count = value;
+  });
+
+  onDestroy(() => {
+    unsubscribe();
+  });
 
   async function subscribe() {
     if (!validateEmail(email)) {
@@ -35,10 +44,10 @@
 
       if (response.ok) {
         successMessage = data.message;
-        alert(successMessage); // Show alert for success
+        alert(successMessage); 
         showEmailInput = false;
-        email = ""; // Reset the email input
-        errorMessage = ""; // Clear any error messages
+        email = "";
+        errorMessage = "";
       } else if (response.status === 400 || response.status === 200) {
         errorMessage = data.message;
       } else {
@@ -61,22 +70,12 @@
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   }
-
-  onMount(async () => {
-    try {
-      const countResponse = await fetch('http://localhost:8000/home/subscriber-count/');
-      const countData = await countResponse.json();
-      subscriberCount = countData.subscriber_count;
-    } catch (error) {
-      console.error('Error fetching subscriber count:', error);
-    }
-  });
 </script>
 
 <div class="profile-card" style="background-color: {backgroundColor};">
-  <img src="" alt="Profile Image">
+  <img src="/RxJourney.png" alt="Logo for RxJourney by Chistev, an Intern Pharmacist and Web Developer">
   <h2>Chistev</h2>
-  <p>{subscriberCount} subscribers</p>
+  <p>{count} subscribers</p>
   <p>Intern Pharmacist and Web developer</p>
   <div class="subscribe-container">
     {#if showEmailInput}
@@ -118,10 +117,11 @@
   }
 
   .profile-card img {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     margin-bottom: 10px;
+    object-fit: cover;
   }
 
   .profile-card h2 {

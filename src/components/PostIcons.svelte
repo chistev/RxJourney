@@ -15,10 +15,11 @@
 <style>
   .post-icons {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: right;
+    justify-content: right;
     font-size: 16px;
     color: #777;
     position: relative;
+    cursor: pointer;
   }
 </style>

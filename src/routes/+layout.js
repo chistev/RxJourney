@@ -1,6 +1,7 @@
+import { subscriberCount } from '../stores/subscriberStore.js'
+
 export async function load({ fetch }) {
   try {
-    // Fetch posts
     console.log('Fetching posts from API...');
     const postsResponse = await fetch('http://localhost:8000/home/post_list/', {
       method: 'GET',
@@ -9,15 +10,35 @@ export async function load({ fetch }) {
       },
       credentials: 'include',
     });
-    
+
     console.log('Posts Response Status:', postsResponse.status);
     if (!postsResponse.ok) {
       throw new Error('Failed to fetch posts');
     }
     const postsData = await postsResponse.json();
-     
+
+    try {
+      const countResponse = await fetch('http://localhost:8000/home/subscriber-count/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      if (!countResponse.ok) {
+        throw new Error('Failed to fetch subscriber count');
+      }
+
+      const countData = await countResponse.json();
+      subscriberCount.set(countData.subscriber_count);
+    } catch (error) {
+      console.error('Error fetching subscriber count:', error);
+      subscriberCount.set(0);
+    }
+
     return {
-      posts: postsData, // Pass posts to the page
+      posts: postsData, 
     };
   } catch (error) {
     console.error('Error fetching data:', error);
