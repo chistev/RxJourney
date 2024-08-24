@@ -8,49 +8,24 @@
   import { onDestroy } from 'svelte';
   import { postStore } from '../../stores/PostStore';
 
-  let post;
+  export let data;
+  let post = data.post;
 
   const unsubscribe = postStore.subscribe(value => {
     post = value;
   });
 
-  export async function load({ fetch, params }) {
-    const { slug } = params;
-
-    try {
-      const response = await fetch(`http://localhost:8000/home/posts/${slug}/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch post');
-      }
-
-      const fetchedPost = await response.json();
-      
-      postStore.set({
-        slug: fetchedPost.slug,
-        title: fetchedPost.title,
-        content: fetchedPost.content,
-        image: fetchedPost.image,
-        createdAt: fetchedPost.created_at,
-      });
-
-      return { post: fetchedPost };
-    } catch (error) {
-      console.error('Error fetching post:', error);
-      return { post: null };
-    }
-  }
+  postStore.set(post);
 
   onDestroy(() => {
     unsubscribe();
   });
 </script>
+
+<svelte:head>
+  <title>{post.title} | RxJourney</title>
+  <meta name="description" content={post.content.slice(0, 150)} />
+</svelte:head>
 
 <div class="post-detail-container">
   <div class="post-header">

@@ -1,8 +1,13 @@
 <script>
 	import AboutContent from "../../components/AboutContent.svelte";
 import ProfileCard from "../../components/ProfileCard.svelte";
-
 </script>
+
+<svelte:head>
+  <title>About Chistev | RxJourney</title>
+  <meta name="description" content="Learn more about Chistev, the journey of an intern pharmacist, and the purpose behind RxJourney." />
+</svelte:head>
+
 <div class="container">
     <div class="main-content">
       <div class="header">

@@ -52,6 +52,11 @@
   });
 </script>
 
+<svelte:head>
+  <title>Search Results for "{searchQuery}" | RxJourney</title>
+  <meta name="description" content="Search results for '{searchQuery}'" />
+</svelte:head>
+
 <div class="container">
   <h1 class="mb-5">Search Results for "{searchQuery}"</h1>
 
