@@ -1,6 +1,6 @@
 <script>
     export let coffeeUrl = "https://buymeacoffee.com/chistev12";
-    export let flutterwaveUrl = "https://www.flutterwave.com/donate/yourusername";
+    export let flutterwaveUrl = "https://flutterwave.com/donate/nxlpmfy1jibs";
 </script>
 
 <style>
@@ -67,13 +67,13 @@
 
 <div class="support-container">
     <h3>Enjoyed the post? ☕</h3>
-    <p>If you had a good time, why not treat me to a coffee? Or if you're feeling extra generous, you can use Flutterwave to show some love. No pressure, but your support does fuel more awesome content! 😉</p>
+    <p>If you had a good time and if you're feeling extra generous, you can leave a donation to show some love. No pressure, but your support does fuel more awesome content! 😉</p>
     <div class="support-buttons">
         <a href={coffeeUrl} class="support-button" target="_blank">
             <i class="bi bi-cup-fill"></i> Buy Me a Coffee
         </a>
         <a href={flutterwaveUrl} class="support-button flutterwave-button" target="_blank">
-            <i class="bi bi-credit-card-fill"></i> Send via Flutterwave
+            <i class="bi bi-credit-card-fill"></i> Send donation
         </a>
     </div>
 </div>

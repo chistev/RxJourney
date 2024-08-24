@@ -14,9 +14,9 @@
   function navigateTo(page) {
     currentTab = page;
     if (page === 'home') {
-      goto('/'); // Navigate to the home route
+      goto('/'); 
     } else if (page === 'about') {
-      goto('/about'); // Navigate to the about route
+      goto('/about'); 
     }
   }
 </script>

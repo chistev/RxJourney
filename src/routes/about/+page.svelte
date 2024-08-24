@@ -29,7 +29,7 @@ import ProfileCard from "../../components/ProfileCard.svelte";
     }
   
     .main-content {
-      width: 100%; /* Full width on small screens */
+      width: 100%;
     }
   
     .header {
@@ -64,10 +64,10 @@ import ProfileCard from "../../components/ProfileCard.svelte";
     .nav-links a.active {
       border-bottom: 2px solid #333;
     }  
-    /* Media query for small screens */
+    
     @media (min-width: 600px) {
       .container {
-        flex-direction: row; /* Revert to row direction for larger screens */
+        flex-direction: row; 
       }
   
       .main-content {

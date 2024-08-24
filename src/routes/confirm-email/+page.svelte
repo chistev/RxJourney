@@ -4,7 +4,6 @@
 
   export let data;
   
-  // Destructure the data prop
   const { valid } = data;
   
   let message = '';

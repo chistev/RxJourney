@@ -11,7 +11,6 @@
         await navigator.clipboard.writeText(currentUrl);
         linkCopied = true;
   
-        // Reset the linkCopied state after 2 seconds
         setTimeout(() => {
           linkCopied = false;
         }, 2000);

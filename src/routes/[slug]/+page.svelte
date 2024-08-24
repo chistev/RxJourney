@@ -6,17 +6,14 @@
   import MorePosts from '../../components/MorePosts.svelte';
 
   import { onDestroy } from 'svelte';
-  import { postStore } from '../../stores/PostStore'; // Import the postStore
+  import { postStore } from '../../stores/PostStore';
 
   let post;
 
-  // Subscribe to postStore to keep track of the current post data
   const unsubscribe = postStore.subscribe(value => {
     post = value;
-    console.log('Current post data from store:', post);
   });
 
-  // Fetch the post data
   export async function load({ fetch, params }) {
     const { slug } = params;
 
@@ -35,7 +32,6 @@
 
       const fetchedPost = await response.json();
       
-      // Update the postStore with the fetched post data
       postStore.set({
         slug: fetchedPost.slug,
         title: fetchedPost.title,
@@ -59,7 +55,7 @@
 <div class="post-detail-container">
   <div class="post-header">
       <h1>{post.title}</h1>
-      <div class="post-date">{formatDate(post.createdAt)}</div>
+      <div class="post-date">{formatDate(post.created_at)}</div>
   </div>
 
   <div class="post-meta-container">
@@ -85,7 +81,6 @@
       <ProfileCard backgroundColor="#f9f9f9"/>
   </div>
 
-  <!-- Divider line -->
   <div class="divider"></div>
 
   <MorePosts currentSlug={post.slug} />
@@ -162,14 +157,6 @@
 .divider {
   border-top: 1px solid #e0e0e0;
   margin: 40px 0;
-}
-.more-from-heading {
-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-font-size: 18px;
-font-weight: 700;
-color: #242424;
-margin-bottom: 20px;
-margin-left: 20px; /* Align with existing content */
 }
 
 .see-all-button-container {

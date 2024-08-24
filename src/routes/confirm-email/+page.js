@@ -1,5 +1,4 @@
 export async function load({ fetch, url }) {
-    // Extract the token from the query parameters
     const token = url.searchParams.get('token');
 
     if (!token) {
@@ -12,7 +11,6 @@ export async function load({ fetch, url }) {
     try {
         const response = await fetch(`http://localhost:8000/home/validate-token/?token=${token}`);
 
-        // If the response is not ok, throw an error
         if (!response.ok) {
             const errorData = await response.json();
             return {
@@ -21,13 +19,10 @@ export async function load({ fetch, url }) {
             };
         }
 
-        // Parse the response
         const data = await response.json();
 
-        // Return the validated email and other data to the Svelte page
         return {
                 valid: data.valid,
-                email: data.data?.email || null
         };
     } catch (error) {
         return {
