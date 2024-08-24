@@ -3,57 +3,63 @@
   import { formatDate } from '../../utils';
   import SupportSection from '../../components/SupportSection.svelte';
   import ProfileCard from '../../components/ProfileCard.svelte';
-import MorePosts from '../../components/MorePosts.svelte';
+  import MorePosts from '../../components/MorePosts.svelte';
 
-import { onDestroy } from 'svelte';
-import { postStore } from '../../stores/postStore';
+  import { onDestroy } from 'svelte';
+  import { postStore } from '../../stores/PostStore'; // Import the postStore
 
-let post;
+  let post;
 
-// Update the store when the data is loaded
-const unsubscribe = postStore.subscribe(value => {
-  post = value;
-  console.log('Post data from store:', post);
-});
+  // Subscribe to postStore to keep track of the current post data
+  const unsubscribe = postStore.subscribe(value => {
+    post = value;
+    console.log('Current post data from store:', post);
+  });
 
-// Fetch the post data
-export async function load({ fetch, params }) {
-  const { slug } = params;
+  // Fetch the post data
+  export async function load({ fetch, params }) {
+    const { slug } = params;
 
-  try {
-    const response = await fetch(`http://localhost:8000/home/posts/${slug}/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
+    try {
+      const response = await fetch(`http://localhost:8000/home/posts/${slug}/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch post');
+      if (!response.ok) {
+        throw new Error('Failed to fetch post');
+      }
+
+      const fetchedPost = await response.json();
+      
+      // Update the postStore with the fetched post data
+      postStore.set({
+        slug: fetchedPost.slug,
+        title: fetchedPost.title,
+        content: fetchedPost.content,
+        image: fetchedPost.image,
+        createdAt: fetchedPost.created_at,
+      });
+
+      return { post: fetchedPost };
+    } catch (error) {
+      console.error('Error fetching post:', error);
+      return { post: null };
     }
-
-    const post = await response.json();
-    postStore.set(post); // Update the store with the fetched post
-
-    return { post };
-  } catch (error) {
-    console.error('Error fetching post:', error);
-    return { post: null };
   }
-}
 
-onDestroy(() => {
-  unsubscribe();
-});
+  onDestroy(() => {
+    unsubscribe();
+  });
 </script>
-
-
 
 <div class="post-detail-container">
   <div class="post-header">
       <h1>{post.title}</h1>
-      <div class="post-date">{formatDate(post.created_at)}</div>
+      <div class="post-date">{formatDate(post.createdAt)}</div>
   </div>
 
   <div class="post-meta-container">
@@ -83,7 +89,6 @@ onDestroy(() => {
   <div class="divider"></div>
 
   <MorePosts currentSlug={post.slug} />
-
 
   <div class="divider"></div>
 

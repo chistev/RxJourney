@@ -1,29 +1,40 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+  import { postStore } from '../stores/postStore';
   import { formatDate } from '../utils';
-
+  
   let randomPosts = [];
+  let currentSlug;
 
-  export let currentSlug;
+  // Subscribe to the store and extract slug
+  const unsubscribe = postStore.subscribe(post => {
+      currentSlug = post.slug;
+  });
 
   onMount(async () => {
-      try {
-          const response = await fetch(`http://localhost:8000/detail/random-posts/${currentSlug}/`, {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              credentials: 'include',
-          });
-
-          if (!response.ok) {
-              throw new Error('Failed to fetch random posts');
+      if (currentSlug) {
+          try {
+              const response = await fetch(`http://localhost:8000/detail/random-posts/${currentSlug}/`, {
+                  method: 'GET',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  credentials: 'include',
+              });
+          
+              if (!response.ok) {
+                  throw new Error('Failed to fetch random posts');
+              }
+          
+              randomPosts = await response.json();
+          } catch (error) {
+              console.error('Error fetching random posts:', error);
           }
-
-          randomPosts = await response.json();
-      } catch (error) {
-          console.error('Error fetching random posts:', error);
       }
+  });
+
+  onDestroy(() => {
+      unsubscribe();
   });
 </script>
 
