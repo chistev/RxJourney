@@ -20,6 +20,32 @@
   onDestroy(() => {
     unsubscribe();
   });
+
+  // Define your base URL (replace with your actual server URL)
+  const BASE_URL = 'http://localhost:8000';  // Replace with your Django server URL
+
+  // Function to prepend the base URL to image sources in the post content
+  function updateImageUrls(htmlContent) {
+  const BASE_URL = 'http://localhost:8000'; // Your Django server URL
+  
+  // Check if window is defined (i.e., if we are in a browser environment)
+  const isBrowser = typeof window !== 'undefined';
+  const isSmallScreen = isBrowser ? window.innerWidth < 768 : false; // Example breakpoint for small screens
+
+  return htmlContent
+    .replace(/src="(\/media\/[^"]*)"/g, `src="${BASE_URL}$1"`)
+    .replace(
+      /<img /g,
+      `<div class="image-wrapper" style="display: flex; justify-content: center; align-items: center; margin: 0 auto;">
+        <img style="max-width: 100%; height: auto; object-fit: contain; ${isSmallScreen ? 'max-height: 500px;' : 'max-height: 600px;'}" `
+    )
+    .replace(/<\/img>/g, '</img></div>');
+}
+
+
+
+  // Update the post content to include the absolute URLs for images
+  $: updatedContent = updateImageUrls(post.content);
 </script>
 
 <svelte:head>
@@ -42,7 +68,7 @@
   {/if}
 
   <div class="post-content">
-      <p>{@html post.content}</p>
+    <p>{@html updatedContent}</p>
   </div>
 
   <PostIcons/>
@@ -104,10 +130,12 @@
 }
 
 .post-image {
-  width: 100%;
+  width: 80%;  /* Adjust the width to be smaller */
+  max-width: 600px;  /* Optionally set a maximum width */
   height: auto;
   object-fit: cover;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;  /* Center the image and add margin below */
+  display: block;  /* Ensure it behaves as a block element */
 }
 
 .post-content {
@@ -156,4 +184,5 @@ transition: background-color 0.3s, color 0.3s;
 background-color: #242424;
 color: #fff;
 }
+
 </style>
