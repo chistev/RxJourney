@@ -3,21 +3,14 @@
   import HomeContent from "../components/HomeContent.svelte";
   import AboutContent from "../components/AboutContent.svelte";
 
-  import { goto } from '$app/navigation';
-
   export let data;
 
   const { posts } = data;
   
   let currentTab = 'home';
 
-  function navigateTo(page) {
-    currentTab = page;
-    if (page === 'home') {
-      goto('/'); 
-    } else if (page === 'about') {
-      goto('/about'); 
-    }
+  function switchTab(tab) {
+    currentTab = tab;
   }
 </script>
 
@@ -26,8 +19,9 @@
     <div class="header">
       <h1 class="mb-4">Chistev</h1>
       <div class="nav-links">
-        <a href="#" class={currentTab === 'home' ? 'active' : ''} on:click={() => navigateTo('home')}>Home</a>
-        <a href="#" class={currentTab === 'about' ? 'active' : ''} on:click={() => navigateTo('about')}>About</a>
+        <a href="#" on:click|preventDefault={() => switchTab('home')} class={currentTab === 'home' ? 'active' : ''}>Home</a>
+        <a href="#" on:click|preventDefault={() => switchTab('about')} class={currentTab === 'about' ? 'active' : ''}>About</a>
+
       </div>
     </div>
 
