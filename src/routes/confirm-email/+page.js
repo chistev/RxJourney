@@ -9,7 +9,7 @@ export async function load({ fetch, url }) {
     }
 
     try {
-        const response = await fetch(`http://localhost:8000/home/validate-token/?token=${token}`);
+        const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/home/validate-token/?token=${token}`);
 
         if (!response.ok) {
             const errorData = await response.json();

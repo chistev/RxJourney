@@ -4,7 +4,7 @@ export async function load({ fetch, params }) {
     const { slug } = params;
   
     try {
-        const response = await fetch(`http://localhost:8000/home/posts/${slug}/`, {
+        const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/home/posts/${slug}/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

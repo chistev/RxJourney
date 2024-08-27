@@ -3,7 +3,7 @@ import { subscriberCount } from '../stores/subscriberStore.js'
 export async function load({ fetch }) {
   try {
     console.log('Fetching posts from API...');
-    const postsResponse = await fetch('http://localhost:8000/home/post_list/', {
+    const postsResponse = await fetch('https://rxjourneyserver.pythonanywhere.com/home/post_list/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export async function load({ fetch }) {
     const postsData = await postsResponse.json();
 
     try {
-      const countResponse = await fetch('http://localhost:8000/home/subscriber-count/', {
+      const countResponse = await fetch('https://rxjourneyserver.pythonanywhere.com/home/subscriber-count/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

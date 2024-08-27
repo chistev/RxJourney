@@ -30,7 +30,7 @@
     try {
       const csrfToken = await fetchCsrfToken();
 
-      const response = await fetch('http://localhost:8000/home/subscribe/', {
+      const response = await fetch('https://rxjourneyserver.pythonanywhere.com/home/subscribe/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

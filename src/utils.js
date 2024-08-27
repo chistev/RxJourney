@@ -1,6 +1,6 @@
 export async function fetchCsrfToken() {
     try {
-      const response = await fetch('http://localhost:8000/get-csrf-token/', {
+      const response = await fetch('https://rxjourneyserver.pythonanywhere.com/get-csrf-token/', {
         method: 'GET',
         credentials: 'include'
       });
@@ -29,7 +29,7 @@ export async function fetchCsrfToken() {
       csrfToken = await fetchCsrfToken();
     }
   
-    const response = await fetch('http://localhost:8000/check-email/', {
+    const response = await fetch('https://rxjourneyserver.pythonanywhere.com/check-email/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -13,7 +13,7 @@
     console.log('isLoading set to true');
     
     try {
-      const response = await fetch(`http://localhost:8000/home/search?query=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/home/search?query=${encodeURIComponent(searchQuery)}`);
       const data = await response.json();
       console.log('Received data:', data);
 

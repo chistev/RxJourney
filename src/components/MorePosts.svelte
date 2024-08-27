@@ -14,7 +14,7 @@
   onMount(async () => {
       if (currentSlug) {
           try {
-              const response = await fetch(`http://localhost:8000/detail/random-posts/${currentSlug}/`, {
+              const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/detail/random-posts/${currentSlug}/`, {
                   method: 'GET',
                   headers: {
                       'Content-Type': 'application/json',
