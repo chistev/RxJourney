@@ -6,7 +6,8 @@
   import MorePosts from '../../components/MorePosts.svelte';
 
   import { onDestroy } from 'svelte';
-  import { postStore } from '../../stores/PostStore';
+  import { postStore } from '$stores/PostStore';
+
 
   export let data;
   let post = data.post;
