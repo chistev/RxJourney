@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "svelte-kit build",
-    	"start": "node build",
+		"build": "vite build",
+		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
