@@ -1,4 +1,4 @@
-The application is a real-time chat application.
+The application is a blog.
 
 It is hosted [here](https://rxjourney.com.ng).
 
