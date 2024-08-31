@@ -1,40 +1,38 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
-  import { postStore } from '../stores/postStore';
+  export let currentSlug;  // Accept the currentSlug prop
+
+  import { onMount, beforeUpdate } from 'svelte';
   import { formatDate } from '../utils';
-  
+
   let randomPosts = [];
-  let currentSlug;
 
-  // Subscribe to the store and extract slug
-  const unsubscribe = postStore.subscribe(post => {
-      currentSlug = post.slug;
-  });
-
-  onMount(async () => {
-      if (currentSlug) {
-          try {
-              const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/detail/random-posts/${currentSlug}/`, {
-                  method: 'GET',
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-                  credentials: 'include',
-              });
-          
-              if (!response.ok) {
-                  throw new Error('Failed to fetch random posts');
-              }
-          
-              randomPosts = await response.json();
-          } catch (error) {
-              console.error('Error fetching random posts:', error);
+  // Function to fetch random posts
+  async function fetchRandomPosts(slug) {
+      try {
+          const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/detail/random-posts/${slug}/`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+          });
+      
+          if (!response.ok) {
+              throw new Error('Failed to fetch random posts');
           }
+      
+          randomPosts = await response.json();
+      } catch (error) {
+          console.error('Error fetching random posts:', error);
       }
+  }
+
+  onMount(() => {
+      fetchRandomPosts(currentSlug);
   });
 
-  onDestroy(() => {
-      unsubscribe();
+  beforeUpdate(() => {
+      fetchRandomPosts(currentSlug);
   });
 </script>
 
@@ -54,6 +52,7 @@
     {/each}
   </div>
 {/if}
+
 
 <style>
   .more-posts-container {

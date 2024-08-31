@@ -1,5 +1,3 @@
-import { postStore } from '../../stores/postStore';
-
 export async function load({ fetch, params }) {
     const { slug } = params;
   
@@ -18,9 +16,7 @@ export async function load({ fetch, params }) {
   
         const post = await response.json();
   
-        // Update the store with the entire post object
-        postStore.set(post);
-  
+        // Return the post directly to the page component
         return { post };
     } catch (error) {
         console.error('Error fetching post:', error);

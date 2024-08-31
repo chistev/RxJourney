@@ -1,27 +1,20 @@
 <script>
+  import { beforeUpdate } from 'svelte';
   import PostIcons from '../../components/PostIcons.svelte';
   import { formatDate } from '../../utils';
   import SupportSection from '../../components/SupportSection.svelte';
   import ProfileCard from '../../components/ProfileCard.svelte';
   import MorePosts from '../../components/MorePosts.svelte';
 
-  import { onDestroy } from 'svelte';
-  import { postStore } from '$stores/postStore';
-
-
   export let data;
-  let post = data.post;
 
-  const unsubscribe = postStore.subscribe(value => {
-    post = value;
+  let { post } = data;
+
+  beforeUpdate(() => {
+    post = data.post;  // Update post data when route changes
   });
 
-  postStore.set(post);
-
-  onDestroy(() => {
-    unsubscribe();
-  });
-
+  console.log ("post", post)
 </script>
 
 <svelte:head>
