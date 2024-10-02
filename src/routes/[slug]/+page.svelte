@@ -13,8 +13,6 @@
   beforeUpdate(() => {
     post = data.post;  // Update post data when route changes
   });
-
-  console.log ("post", post)
 </script>
 
 <svelte:head>

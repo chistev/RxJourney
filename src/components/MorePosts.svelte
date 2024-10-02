@@ -1,7 +1,7 @@
 <script>
   export let currentSlug;  // Accept the currentSlug prop
 
-  import { onMount, beforeUpdate } from 'svelte';
+  import { onMount } from 'svelte';
   import { formatDate } from '../utils';
 
   let randomPosts = [];
@@ -27,11 +27,12 @@
       }
   }
 
-  onMount(() => {
+  // Reactive statement that triggers when currentSlug changes
+  $: if (currentSlug) {
       fetchRandomPosts(currentSlug);
-  });
+  }
 
-  beforeUpdate(() => {
+  onMount(() => {
       fetchRandomPosts(currentSlug);
   });
 </script>
@@ -52,7 +53,6 @@
     {/each}
   </div>
 {/if}
-
 
 <style>
   .more-posts-container {
