@@ -77,6 +77,13 @@
   <h2>Chistev</h2>
   <p>{count} {count === 1 ? 'subscriber' : 'subscribers'}</p>
   <p>Intern Pharmacist and Web developer</p>
+  
+  <!-- RSS Feed Icon Section -->
+  <div class="rss-feed">
+    <a href="https://rxjourneyserver.pythonanywhere.com/rss_feed/rss/" target="_blank">
+      <i class="fas fa-rss" style="font-size: 30px; color: #FF6600;"></i>
+    </a>
+  </div>
   <div class="subscribe-container">
     {#if showEmailInput}
       <input
@@ -141,6 +148,10 @@
     margin-bottom: 15px;
     font-weight: 400;
     line-height: 24px;
+  }
+
+  .rss-feed {
+    margin-top: 10px;
   }
 
   .subscribe-container {
