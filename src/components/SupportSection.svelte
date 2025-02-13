@@ -73,7 +73,7 @@
             <i class="bi bi-cup-fill"></i> Buy Me a Coffee
         </a>
         <a href={flutterwaveUrl} class="support-button flutterwave-button" target="_blank">
-            <i class="bi bi-credit-card-fill"></i> Send donation
+            <i class="bi bi-credit-card-fill"></i> Send Naira
         </a>
     </div>
 </div>
