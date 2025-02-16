@@ -5,7 +5,7 @@
 
   export let data;
 
-  const { posts } = data;
+  const { posts, nextPage } = data;
   
   let currentTab = 'home';
 
@@ -26,7 +26,7 @@
     </div>
 
     {#if currentTab === 'home'}
-      <HomeContent {posts}/>
+      <HomeContent {posts} {nextPage}/>
     {:else if currentTab === 'about'}
       <AboutContent/>
     {/if}

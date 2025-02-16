@@ -1,9 +1,9 @@
-import { subscriberCount } from '../stores/subscriberStore.js'
+import { subscriberCount } from '../stores/subscriberStore.js';
 
 export async function load({ fetch }) {
   try {
-    console.log('Fetching posts from API...');
-    const postsResponse = await fetch('https://rxjourneyserver.pythonanywhere.com/home/post_list/', {
+    console.log('Fetching initial posts from API...');
+    const postsResponse = await fetch('https://rxjourneyserver.pythonanywhere.com/home/post_list/?page=1', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -17,6 +17,7 @@ export async function load({ fetch }) {
     }
     const postsData = await postsResponse.json();
 
+    // Fetch subscriber count
     try {
       const countResponse = await fetch('https://rxjourneyserver.pythonanywhere.com/home/subscriber-count/', {
         method: 'GET',
@@ -38,13 +39,15 @@ export async function load({ fetch }) {
     }
 
     return {
-      posts: postsData, 
+      posts: postsData.results, // Store the first 10 posts
+      nextPage: postsData.next, // Store the next page URL
     };
   } catch (error) {
     console.error('Error fetching data:', error);
     
     return {
       posts: [], // Return an empty array if there's an error
+      nextPage: null, // No next page if an error occurs
     };
   }
 }
