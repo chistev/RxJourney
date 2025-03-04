@@ -113,7 +113,7 @@
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 350px;
+    height: 400px;
   }
 
   @media (min-width: 768px) {
