@@ -70,7 +70,7 @@
     <p>If you had a good time and if you're feeling extra generous, you can leave a donation to show some love. No pressure, but your support does fuel more awesome content! 😉</p>
     <div class="support-buttons">
         <a href={coffeeUrl} class="support-button" target="_blank">
-            <i class="bi bi-cup-fill"></i> Buy Me a Coffee
+            <i class="bi bi-cup-fill"></i> Send Dollars
         </a>
         <a href={flutterwaveUrl} class="support-button flutterwave-button" target="_blank">
             <i class="bi bi-credit-card-fill"></i> Send Naira
