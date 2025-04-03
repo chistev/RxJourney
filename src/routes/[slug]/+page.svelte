@@ -24,7 +24,7 @@
   <!-- Open Graph meta tags for social media sharing -->
   <meta property="og:title" content={post ? post.title : 'RxJourney'} />
   <meta property="og:description" content={post ? post.content.slice(0, 150) : 'The Journey of an Intern Pharmacist'} />
-  <meta property="og:image" content={post ? post.image : 'https://rxjourney.com.ng/RxJourney.png'} />
+  <meta property="og:image" content={post ? post.image : 'https://rxjourney.net/RxJourney.png'} />
   <meta property="og:url" content={typeof window !== 'undefined' && post ? window.location.href : ''} />
   <meta property="og:type" content="article" />
 
@@ -32,7 +32,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={post ? post.title : 'RxJourney'} />
   <meta name="twitter:description" content={post ? post.content.slice(0, 150) : 'The Journey of an Intern Pharmacist'} />
-  <meta name="twitter:image" content={post ? post.image : 'https://rxjourney.com.ng/RxJourney.png'} />
+  <meta name="twitter:image" content={post ? post.image : 'https://rxjourney.net/RxJourney.png'} />
   <meta name="twitter:url" content={typeof window !== 'undefined' && post ? window.location.href : ''} />
 </svelte:head>
 
