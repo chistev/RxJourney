@@ -83,6 +83,8 @@
     <a href="https://rxjourneyserver.pythonanywhere.com/rss_feed/rss/" target="_blank">
       <i class="fas fa-rss" style="font-size: 30px; color: #FF6600;"></i>
     </a>
+    <p class="rss-label">RSS Feed</p>
+    <hr>
   </div>
   <div class="subscribe-container">
     {#if showEmailInput}
@@ -113,7 +115,7 @@
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 400px;
+    height: 450px;
   }
 
   @media (min-width: 768px) {
@@ -188,4 +190,11 @@
     color: red;
     margin-top: 10px;
   }
+
+  .rss-label {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
 </style>
