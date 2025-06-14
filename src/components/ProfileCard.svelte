@@ -28,6 +28,9 @@
     isLoading = true;
 
     try {
+      // ✅ Request reCAPTCHA token
+    const token = await grecaptcha.execute("6Lfml2ArAAAAADPLiuP4S0n47Wh6x7Itc9KA5e4z", { action: "subscribe" });
+
       const csrfToken = await fetchCsrfToken();
 
       const response = await fetch('https://rxjourneyserver.pythonanywhere.com/home/subscribe/', {
@@ -37,7 +40,9 @@
           'X-CSRFToken': csrfToken,
         },
         credentials: 'include',
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email,
+          recaptcha_token: token  // ✅ Include token in request body
+        })
       });
 
       const data = await response.json();
