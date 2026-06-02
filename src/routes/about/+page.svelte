@@ -5,7 +5,7 @@ import ProfileCard from "../../components/ProfileCard.svelte";
 
 <svelte:head>
   <title>About Chistev | RxJourney</title>
-  <meta name="description" content="Learn more about Chistev, the journey of an intern pharmacist, and the purpose behind RxJourney." />
+  <meta name="description" content="Learn more about Chistev, the journey of a pharmacist, and the purpose behind RxJourney." />
 </svelte:head>
 
 <div class="container">

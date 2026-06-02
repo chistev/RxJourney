@@ -78,10 +78,10 @@
 </script>
 
 <div class="profile-card" style="background-color: {backgroundColor};">
-  <img src="/RxJourney.png" alt="Logo for RxJourney by Chistev, an Intern Pharmacist and Web Developer">
+  <img src="/RxJourney.png" alt="Logo for RxJourney by Chistev, a Pharmacist and Web Developer">
   <h2>Chistev</h2>
   <p>{count} {count === 1 ? 'subscriber' : 'subscribers'}</p>
-  <p>Intern Pharmacist and Web developer</p>
+  <p>Pharmacist and Web developer</p>
   
   <!-- RSS Feed Icon Section -->
   <div class="rss-feed">

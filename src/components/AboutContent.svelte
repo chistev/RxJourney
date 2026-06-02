@@ -27,7 +27,7 @@
 <div class="about-content">
   <h2>About Me</h2>
   <p>
-    I am currently an intern pharmacist. Alongside my passion for Pharmacy, I am also a dedicated full-stack web developer, constantly honing my skills in building dynamic and responsive web applications.
+    I am a pharmacist. Alongside my passion for Pharmacy, I am also a dedicated full-stack web developer, constantly honing my skills in building dynamic and responsive web applications.
   </p>
   <p>
     My journey into web development has been fueled by a desire to create and innovate. My ultimate goal is to transition fully into tech, using my coding skills to escape the matrix and make a broader impact.
