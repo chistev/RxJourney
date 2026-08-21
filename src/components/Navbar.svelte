@@ -1,6 +1,5 @@
 <script>
   let searchQuery = '';
-  let showSearch = false;
 
   function handleSearch(event) {
     event.preventDefault();
@@ -8,21 +7,21 @@
       window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
     }
   }
-
-  function toggleSearch() {
-    showSearch = !showSearch;
-  }
 </script>
 
 <nav class="navbar">
   <div class="container">
     <a class="navbar-brand" href="/">RxJourney</a>
-    <button class="hamburger" on:click={toggleSearch}>
-      <i class="bi bi-list"></i>
-    </button>
-    <form on:submit={handleSearch} class="search-form {showSearch ? 'show' : ''}">
-      <input type="text" class="search-input" bind:value={searchQuery} placeholder="Search">
-      <button type="submit" class="search-button">
+
+    <form on:submit={handleSearch} class="search-form">
+      <input
+        type="text"
+        class="search-input"
+        bind:value={searchQuery}
+        placeholder="Search…"
+        aria-label="Search posts"
+      />
+      <button type="submit" class="search-button" aria-label="Search">
         <i class="bi bi-search"></i>
       </button>
     </form>
@@ -31,79 +30,79 @@
 
 <style>
   .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #eee;
+    padding: 0.85rem 1.25rem;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    background-color: #fff;
+    justify-content: space-between;
+    gap: 1.5rem;
   }
 
   .navbar-brand {
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    font-weight: bold;
-    font-size: 24px;
-    color: #333;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    color: #111;
     text-decoration: none;
   }
 
   .search-form {
     display: flex;
     align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    max-width: 500px;
+    background: #f5f5f5;
+    border-radius: 999px;
+    padding: 0.35rem 0.6rem 0.35rem 1rem;
+    max-width: 280px;
     width: 100%;
-    transition: max-width 0.3s ease;
+    transition: background 0.2s;
   }
 
-  .search-form.show {
-    display: flex;
+  .search-form:focus-within {
+    background: #eee;
   }
 
   .search-input {
     border: none;
+    background: transparent;
     outline: none;
-    background-color: transparent;
-    font-size: 16px;
-    color: #333;
-    padding: 0.5rem;
-    flex-grow: 1;
+    font-size: 0.95rem;
+    color: #222;
+    width: 100%;
+  }
+
+  .search-input::placeholder {
+    color: #999;
   }
 
   .search-button {
     background: none;
     border: none;
-    color: #007bff;
-    font-size: 16px;
-    padding: 0.5rem;
+    color: #666;
+    font-size: 1rem;
+    padding: 0.25rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
 
   .search-button:hover {
-    color: #0056b3;
+    color: #111;
   }
 
-  .hamburger {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #333;
-    cursor: pointer;
-  }
-
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     .search-form {
-      display: none;
-    }
-
-    .search-form.show {
-      display: flex;
-    }
-
-    .hamburger {
-      display: block;
+      max-width: 180px;
     }
   }
 </style>

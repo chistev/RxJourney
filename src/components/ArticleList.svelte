@@ -1,14 +1,12 @@
 <script>
-  import { formatDate } from '../utils'; 
+  import { formatDate } from '../utils';
   export let posts = [];
-  export let nextPage; 
+  export let nextPage;
 
   async function loadMore() {
-    if (!nextPage) return; 
-
+    if (!nextPage) return;
     const response = await fetch(nextPage);
     if (!response.ok) return;
-
     const data = await response.json();
     posts = [...posts, ...data.results];
     nextPage = data.next;
@@ -19,15 +17,13 @@
   {#each posts as post}
     <li class="article-item">
       <a href={`/${post.slug}`} class="article-link">
-        <div class="article-content">
-          <h2>{post.title}</h2>
-          <p>{@html post.content.slice(0, 250) + '...'}</p>
-          <div class="article-meta">
-            <span>{formatDate(post.created_at)}</span>
-          </div>
+        <div class="article-body">
+          <h2 class="title">{post.title}</h2>
+          <p class="excerpt">{@html post.content.slice(0, 220) + '…'}</p>
+          <time class="date">{formatDate(post.created_at)}</time>
         </div>
         {#if post.image}
-          <img src={post.image} alt={post.title} />
+          <img src={post.image} alt="" class="thumb" loading="lazy" />
         {/if}
       </a>
     </li>
@@ -35,91 +31,108 @@
 </ul>
 
 {#if nextPage}
-  <button on:click={loadMore} class="see-more-button">See More</button>
+  <div class="load-more">
+    <button on:click={loadMore} class="see-more">Load more</button>
+  </div>
 {/if}
-  
-  <style>
-    .article-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
 
-.article-item {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 20px;
-  max-width: 700px;
-}
+<style>
+  .article-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 720px;
+  }
 
-.article-link {
-  display: flex;
-  align-items: flex-start;
-  width: 100%;
-  text-decoration: none;
-  color: inherit;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
-}
+  .article-item {
+    border-bottom: 1px solid #eee;
+    padding: 2.25rem 0;
+  }
 
-.article-link:focus {
-  outline: 2px solid #007bff;
-}
+  .article-item:last-child {
+    border-bottom: none;
+  }
 
-.article-item img {
-  width: 150px;
-  height: 100px;
-  object-fit: cover;
-  margin-left: 20px;
-}
+  .article-link {
+    display: flex;
+    gap: 1.75rem;
+    text-decoration: none;
+    color: inherit;
+  }
 
-.article-content {
-  flex: 1;
-}
+  .article-body {
+    flex: 1;
+    min-width: 0;
+  }
 
-.article-content p {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: #191919;
-}
+  .title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111;
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.02em;
+  }
 
-.article-meta {
-  display: flex;
-  gap: 15px;
-  font-size: 0.9em;
-  color: #777;
-}
+  .excerpt {
+    font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: #444;
+    margin: 0 0 0.85rem;
+  }
 
-.article-meta span {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: #191919;
-}
+  .date {
+    font-size: 0.875rem;
+    color: #888;
+  }
 
-.see-more-button {
-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-font-size: 14px;
-font-weight: 700;
-color: #242424;
-padding: 10px 20px;
-border: 2px solid #242424;
-border-radius: 20px;
-background-color: transparent;
-cursor: pointer;
-transition: background-color 0.3s, color 0.3s;
-}
+  .thumb {
+    width: 140px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
 
-.see-more-button:hover {
-background-color: #242424;
-color: #fff;
-}
+  .load-more {
+    text-align: center;
+    padding: 2.5rem 0 1rem;
+  }
 
-  </style>
-  
+  .see-more {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111;
+    background: transparent;
+    border: 1.5px solid #ccc;
+    border-radius: 999px;
+    padding: 0.65rem 1.6rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .see-more:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+
+  @media (max-width: 600px) {
+    .article-link {
+      flex-direction: column-reverse;
+      gap: 1rem;
+    }
+
+    .thumb {
+      width: 100%;
+      height: 180px;
+    }
+
+    .title {
+      font-size: 1.3rem;
+    }
+  }
+</style>

@@ -1,130 +1,116 @@
 <script>
-  export let currentSlug;  // Accept the currentSlug prop
-
+  export let currentSlug;
   import { onMount } from 'svelte';
   import { formatDate } from '../utils';
 
   let randomPosts = [];
 
-  // Function to fetch random posts
   async function fetchRandomPosts(slug) {
-      try {
-          const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/detail/random-posts/${slug}/`, {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              credentials: 'include',
-          });
-      
-          if (!response.ok) {
-              throw new Error('Failed to fetch random posts');
-          }
-      
-          randomPosts = await response.json();
-      } catch (error) {
-          console.error('Error fetching random posts:', error);
-      }
+    try {
+      const response = await fetch(`https://rxjourneyserver.pythonanywhere.com/detail/random-posts/${slug}/`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to fetch random posts');
+      randomPosts = await response.json();
+    } catch (error) {
+      console.error('Error fetching random posts:', error);
+    }
   }
 
-  // Reactive statement that triggers when currentSlug changes
   $: if (currentSlug) {
-      fetchRandomPosts(currentSlug);
+    fetchRandomPosts(currentSlug);
   }
 
   onMount(() => {
-      fetchRandomPosts(currentSlug);
+    fetchRandomPosts(currentSlug);
   });
 </script>
 
 {#if randomPosts.length > 0}
-  <div class="divider"></div>
-  <h2 class="more-from-heading text-center">More from Chistev</h2>
-
-  <div class="more-posts-container">
-    {#each randomPosts as post}
-      <a href={`/${post.slug}`} class="post-card-link">
-        <div class="post-card">
-          <div class="post-card-title">{post.title}</div>
-          <div class="post-card-meta">{formatDate(post.created_at)}</div>
-          <div class="post-card-content">{@html post.content}</div>
-        </div>
-      </a>
-    {/each}
-  </div>
+  <section class="more">
+    <h2 class="heading">More from Chistev</h2>
+    <div class="grid">
+      {#each randomPosts as post}
+        <a href={`/${post.slug}`} class="card">
+          <h3 class="title">{post.title}</h3>
+          <time class="date">{formatDate(post.created_at)}</time>
+          <div class="excerpt">{@html post.content}</div>
+        </a>
+      {/each}
+    </div>
+  </section>
 {/if}
 
 <style>
-  .more-posts-container {
+  .more {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid #eee;
+  }
+
+  .heading {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
+    margin: 0 0 2rem;
+  }
+
+  .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 1.5rem;
     max-width: 800px;
     margin: 0 auto;
-    background-color: #f9f9f9;
   }
 
-  .post-card-link {
-    text-decoration: none; 
-    color: inherit; 
-    display: block; 
+  .card {
+    display: block;
+    padding: 1.25rem;
+    border-radius: 10px;
+    background: #fafafa;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
   }
 
-  .post-card {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 10px;
-    max-width: 300px;
-    margin: 0 auto;
-    transition: background-color 0.3s; 
+  .card:hover {
+    background: #f0f0f0;
   }
 
-  .post-card img {
-    width: 100%;
-    border-radius: 8px;
-    height: 150px;
-    object-fit: cover;
-  }
-
-  .post-card-title {
+  .title {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #242424;
-    margin: 10px 0;
+    color: #111;
+    margin: 0 0 0.4rem;
+    line-height: 1.35;
   }
 
-  .post-card-meta {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    line-height: 18px;
-    font-size: 12px;
-    color: #6b6b6b;
-    margin-bottom: 10px;
+  .date {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-bottom: 0.6rem;
   }
 
-  .post-card-content {
+  .excerpt {
     font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #242424;
-    line-height: 22px;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #444;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  .post-card-link:hover .post-card {
-    background-color: #e0e0e0; 
-    cursor: pointer; 
-  }
-
-  /* Media query for smaller screens */
   @media (max-width: 600px) {
-    .more-posts-container {
-      grid-template-columns: 1fr; /* Stack cards vertically */
-    }
-
-    .post-card {
-      max-width: 100%; /* Ensure cards take full width on smaller screens */
-      margin-bottom: 20px;
+    .grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -24,15 +24,10 @@
       errorMessage = "Please enter a valid email address.";
       return;
     }
-
     isLoading = true;
-
     try {
-      // ✅ Request reCAPTCHA token
-    const token = await grecaptcha.execute("6Lfml2ArAAAAADPLiuP4S0n47Wh6x7Itc9KA5e4z", { action: "subscribe" });
-
+      const token = await grecaptcha.execute("6Lfml2ArAAAAADPLiuP4S0n47Wh6x7Itc9KA5e4z", { action: "subscribe" });
       const csrfToken = await fetchCsrfToken();
-
       const response = await fetch('https://rxjourneyserver.pythonanywhere.com/home/subscribe/', {
         method: 'POST',
         headers: {
@@ -40,16 +35,12 @@
           'X-CSRFToken': csrfToken,
         },
         credentials: 'include',
-        body: JSON.stringify({ email,
-          recaptcha_token: token  // ✅ Include token in request body
-        })
+        body: JSON.stringify({ email, recaptcha_token: token })
       });
-
       const data = await response.json();
-
       if (response.ok) {
         successMessage = data.message;
-        alert(successMessage); 
+        alert(successMessage);
         showEmailInput = false;
         email = "";
         errorMessage = "";
@@ -77,129 +68,145 @@
   }
 </script>
 
-<div class="profile-card" style="background-color: {backgroundColor};">
-  <img src="/RxJourney.png" alt="Logo for RxJourney by Chistev, a Pharmacist and Web Developer">
-  <h2>Chistev</h2>
-  <p>{count} {count === 1 ? 'subscriber' : 'subscribers'}</p>
-  <p>Pharmacist and Web developer</p>
-  
-  <!-- RSS Feed Icon Section -->
-  <div class="rss-feed">
-    <a href="https://rxjourneyserver.pythonanywhere.com/rss_feed/rss/" target="_blank">
-      <i class="fas fa-rss" style="font-size: 30px; color: #FF6600;"></i>
+<aside class="profile-card" style="background-color: {backgroundColor};">
+  <img src="/RxJourney.png" alt="RxJourney" class="avatar" />
+  <h2 class="name">Chistev</h2>
+  <p class="role">Pharmacist · Web developer</p>
+  <p class="count">{count} {count === 1 ? 'subscriber' : 'subscribers'}</p>
+
+  <div class="rss">
+    <a href="https://rxjourneyserver.pythonanywhere.com/rss_feed/rss/" target="_blank" rel="noopener">
+      <i class="fas fa-rss"></i>
+      <span>RSS</span>
     </a>
-    <p class="rss-label">RSS Feed</p>
-    <hr>
   </div>
-  <div class="subscribe-container">
+
+  <div class="subscribe">
     {#if showEmailInput}
       <input
         type="email"
-        placeholder="Enter your email"
+        placeholder="Your email"
         bind:value={email}
         disabled={isLoading}
+        class="email-input"
       />
-      <button class="secondary" on:click={subscribe} disabled={isLoading || !email}>
-        {isLoading ? 'Subscribing...' : 'Submit'}
+      <button class="btn secondary" on:click={subscribe} disabled={isLoading || !email}>
+        {isLoading ? '…' : 'Subscribe'}
       </button>
       {#if errorMessage}
-        <p class="error-message">{errorMessage}</p>
+        <p class="error">{errorMessage}</p>
       {/if}
     {:else}
-      <button class="primary" on:click={handleClickSubscribe}>
+      <button class="btn primary" on:click={handleClickSubscribe}>
         Subscribe
       </button>
     {/if}
   </div>
-</div>
+</aside>
 
 <style>
   .profile-card {
-    background-color: white;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 1.75rem 1.5rem;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 450px;
+    border: 1px solid #eee;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     .profile-card {
-      position: sticky; 
-      top: 20px; 
+      position: sticky;
+      top: 5.5rem;
     }
   }
 
-  .profile-card img {
-    width: 100px;
-    height: 100px;
+  .avatar {
+    width: 84px;
+    height: 84px;
     border-radius: 50%;
-    margin-bottom: 10px;
     object-fit: cover;
+    margin-bottom: 1rem;
   }
 
-  .profile-card h2 {
-    font-size: 1.5em;
-    margin-bottom: 5px;
+  .name {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 20px;
-    color: #242424;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 0.25rem;
   }
 
-  .profile-card p {
-    color: #191919;
-    font-size: 16px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    margin-bottom: 15px;
-    font-weight: 400;
-    line-height: 24px;
+  .role {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 0.5rem;
   }
 
-  .rss-feed {
-    margin-top: 10px;
+  .count {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 0 1.25rem;
   }
 
-  .subscribe-container {
-    margin-top: 20px;
+  .rss a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: #666;
+    text-decoration: none;
   }
 
-  .subscribe-container input {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
+  .rss a:hover {
+    color: #e85d04;
+  }
+
+  .rss i {
+    font-size: 1.1rem;
+    color: #e85d04;
+  }
+
+  .subscribe {
+    margin-top: 1.5rem;
+  }
+
+  .email-input {
     width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
     box-sizing: border-box;
   }
 
-  .subscribe-container button {
-    padding: 10px 20px;
-    border-radius: 4px;
+  .btn {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
     border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: background 0.2s;
   }
 
-  .subscribe-container button.primary {
-    background-color: #3a9a00;
-    color: white;
+  .btn.primary {
+    background: #111;
+    color: #fff;
   }
 
-  .subscribe-container button.secondary {
-    background-color: #f0f0f0;
-    color: #3a9a00;
+  .btn.primary:hover {
+    background: #333;
   }
 
-  .error-message {
-    color: red;
-    margin-top: 10px;
+  .btn.secondary {
+    background: #f0f0f0;
+    color: #111;
   }
 
-  .rss-label {
-  font-size: 12px;
-  color: #666;
-  margin-top: 4px;
-}
-
+  .error {
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
 </style>
